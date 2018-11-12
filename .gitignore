@@ -1,32 +1,15 @@
-# Prerequisites
-*.d
+# Eclipse artifacts
+.cproject
+.project
+.settings/
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# Editor artifacts
+*~
 
-# Precompiled Headers
-*.gch
-*.pch
+# Make results
+db-create.sql
+db-rest.sql.bz2
+drop-all.sql
+postgisdbs.lst
+role-create.sql
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
