@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 if ( scalar @ARGV != 4 ) {
-    die "usage: $0 sql-dbs sql-roles sql-drops postgisdbs
+	die "usage: $0 sql-dbs sql-roles sql-drops postgisdbs
 
 Read Postgresql database dump from stdin and write a modified version to
 stdout. The following modifications will be made:
@@ -31,70 +31,85 @@ To remove test data run sql-drops(NOTE: it will remote ALL data in those databas
 
 WARNING: running this command will overwrite anything already in the
 files named by parameters
-" ;
-	
+";
+
 }
 
-open DATABASES,">".$ARGV[0];
-open ROLES,">".$ARGV[1];
-open DROPS,">".$ARGV[2];
+open DATABASES, ">" . $ARGV[0];
+open ROLES,     ">" . $ARGV[1];
+open DROPS,     ">" . $ARGV[2];
 
-my $currentdb="";
-my $currentfunction="";
-my $functionbody="";
-my %postgisdbs=();
+my $currentdb       = "";
+my $currentfunction = "";
+my $functionbody    = "";
+my %postgisdbs      = ();
 
 while (<STDIN>) {
-    my $line = $_ ;
+	my $line = $_;
 
-    if ($line =~ m/^CREATE ROLE ([a-z_]*)/ ) {
-	if ($1 eq "postgres") {
-	    # Don't try to recreate postgres
-	    next ; # Go to next line
-	}
-	print DROPS "DROP ROLE IF EXISTS $1;\n";
-	print ROLES $line;
-	next;
-    }
-    if ($line =~ m/^CREATE DATABASE ([a-z_]*)/ ) {
-	# Create databases in a separate script
-	print DATABASES $line ;
-	print DROPS "DROP DATABASE IF EXISTS $1;\n";
-	next ;
-    }
-    if ($currentfunction) {
-	$functionbody.=$line;
-	if ($line =~ /;\s*$/) {
-	    $currentfunction="";
-	    # Function body ends
-	    if ($functionbody =~ m/AS '[^']*postgis/ ) {
-		# This is a Postgis function, skipping it completely
-		# but recording the database
-		$postgisdbs{$currentdb}=1;
+	if ( $line =~ m/^CREATE ROLE ([a-z_]*)/ ) {
+		if ( $1 eq "postgres" ) {
+
+			# Don't try to recreate postgres
+			next;    # Go to next line
+		}
+		print DROPS "DROP ROLE IF EXISTS $1;\n";
+		print ROLES $line;
 		next;
-	    } else {
-		print $functionbody;
-		next;
-	    }
-	} else {
-	    # Function body continues
-	    next;
 	}
-    }
-    if ($line =~ m/^CREATE FUNCTION ([a-zA-Z_.]*)/ ) {
-	$currentfunction=$1;
-	$line =~ s/^CREATE FUNCTION/CREATE OR REPLACE FUNCTION/ ;
-	$functionbody=$line;
-	next;
-    }
-    if ($line =~ m/^\\connect ([a-z_]*)/ ) {
-	$currentdb=$1;
-    }
-    
-    print $line ;
+	if ( $line =~ m/^CREATE DATABASE ([a-z_]*)/ ) {
+
+		# Create databases in a separate script
+		print DATABASES $line;
+		print DROPS "DROP DATABASE IF EXISTS $1;\n";
+		next;
+	}
+	if ($currentfunction) {
+		$functionbody .= $line;
+		if ( $line =~ /;\s*$/ ) {
+			$currentfunction = "";
+
+			# Function body ends
+			if ( $functionbody =~ m/AS '[^']*postgis/ ) {
+
+				# This is a Postgis function, skipping it completely
+				# but recording the database
+				$postgisdbs{$currentdb} = 1;
+				next;
+			}
+			else {
+				print $functionbody;
+				next;
+			}
+		}
+		else {
+			# Function body continues
+			next;
+		}
+	}
+	if ( $line =~ m/^CREATE FUNCTION ([a-zA-Z_.]*)/ ) {
+		$currentfunction = $1;
+		$line =~ s/^CREATE FUNCTION/CREATE OR REPLACE FUNCTION/;
+		$functionbody = $line;
+		next;
+	}
+	if ( $line =~ m/^\\connect ([a-z_]*)/ ) {
+		$currentdb = $1;
+	}
+	if ( $line =~ m/^ALTER ROLE / ) {
+		# Remove certain role options not available in pre-9.5 Postgresql
+		$line =~ s/ NOBYPASSRLS// ;
+		$line =~ s/ BYPASSRLS// ;
+	}
+	# Remove some other options not available in pre-9.5 Postgresql
+	if ( $line =~ m/^SET ([a-z_]*)/ ) {
+		if ($1 eq "lock_timeout") { next; }
+		if ($1 eq "row_security") { next; }
+	}
+	print $line ;
 }
 
-open POSTGIS,">$ARGV[3]" ;
-foreach my $db (sort keys %postgisdbs) {
-    print POSTGIS "$db\n";
+open POSTGIS, ">$ARGV[3]";
+foreach my $db ( sort keys %postgisdbs ) {
+	print POSTGIS "$db\n";
 }
