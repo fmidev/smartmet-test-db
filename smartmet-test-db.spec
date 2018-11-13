@@ -15,7 +15,12 @@ BuildRequires: bzip2
 BuildRequires: make
 BuildRequires: rpm-build
 #TestRequires: make
+#TestRequires: postgresql-server
+#TestRequires: postgresql-contrib
+#TestRequires: postgis
+#TestRequires: bzip2
 Provides: %{LIBNAME}
+Requires: postgresql-contrib
 Requires: postgresql-server
 Requires: postgis
 Requires: bzip2
