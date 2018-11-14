@@ -55,12 +55,17 @@ rpm: clean $(SPEC).spec
 # - insert test data(with error checking)
 # - check something(?)
 # - clean database of test data(with error checking)
+pginit =  $(shell ( ( test "$$CIRCLE_JOB" = "test" && echo $(mydatadir)/test/db/init-and-start.sh ) || echo ./init-and-start.sh ))
+dbinst =  $(shell ( ( test "$$CIRCLE_JOB" = "test" && echo $(mydatadir)/test/db/install-test-db.sh ) || echo ./install-test-db.sh ))
+
 test:
 	echo "CI=$$CI"
 	@test "$$CI" = "true" || ( \
 		echo "Running make test outside of CI will destroy local(or PGHOST) database contents!" ; \
 		echo "If you are sure, set environment CI=true" ; false )
 	test ! -d /usr/share/smartmet/test/db || make testinstall
+	$(pginit)
+	$(dbinst)
 	#rpm -ql smartmet-test-db
 
 testinstall:
