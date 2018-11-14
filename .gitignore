@@ -12,4 +12,8 @@ db-rest.sql.bz2
 drop-all.sql
 postgisdbs.lst
 role-create.sql
+db-dump
+db-rest.sql
 
+# May come as a result of CI System local testing
+dist/
