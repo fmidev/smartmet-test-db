@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 18.11.12
+Version: 18.11.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries

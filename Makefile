@@ -28,8 +28,8 @@ clean:
 	rm -f *~ $(SUBNAME)/*~ db-rest.sql.bz2 db-create.sql role-create.sql drop-all.sql postgisdbs.lst db-dump db-rest.sql
 
 install:
-	@mkdir -p $(mydatadir)/test/db
-	cp -v *.sql* postgisdbs.lst $(mydatadir)/test/db
+	mkdir -p $(mydatadir)/test/db
+	cp -v db-create.sql role-create.sql drop-all.sql postgisdbs.lst *.sql.bz2 *.sh $(mydatadir)/test/db
 
 db-dump: db-dump.bz2
 	bzcat db-dump.bz2 > db-dump
@@ -42,7 +42,7 @@ db-rest.sql db-create.sql role-create.sql drop-all.sql postgisdbs.lst: db-dump d
 	mv tmp2 db-rest.sql
 
 rpm: clean $(SPEC).spec
-	rm -f $(SPEC).tar.gz # Clean a possible leftover from previous attempt
+	rm -f $(SPEC).tar.gz dist/* # Clean a possible leftover from previous attempt
 	tar -czvf $(SPEC).tar.gz --transform "s,^,$(SPEC)/," *
 	rpmbuild -ta $(SPEC).tar.gz
 	rm -f $(SPEC).tar.gz
@@ -56,4 +56,15 @@ rpm: clean $(SPEC).spec
 # - check something(?)
 # - clean database of test data(with error checking)
 test:
-	test ! -d /usr/share/smartmet/test/db || rpm -ql smartmet-test-db
+	echo "CI=$$CI"
+	@test "$$CI" = "true" || ( \
+		echo "Running make test outside of CI will destroy local(or PGHOST) database contents!" ; \
+		echo "If you are sure, set environment CI=true" ; false )
+	test ! -d /usr/share/smartmet/test/db || make testinstall
+	#rpm -ql smartmet-test-db
+
+testinstall:
+	@echo "Testing installation file count"
+	ls -l /usr/share/smartmet/test/db/
+	test `ls /usr/share/smartmet/test/db/*.sql* | wc -l` = "4"
+	test `ls /usr/share/smartmet/test/db/*.sh | wc -l` = "2"
