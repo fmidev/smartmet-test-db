@@ -32,7 +32,10 @@ install:
 	cp -v *.sql* postgisdbs.lst $(mydatadir)/test/db
 
 db-rest.sql.bz2 db-create.sql role-create.sql drop-all.sql postgisdbs.lst: db-dump.bz2 database-script-creator.pl Makefile
-	bzcat db-dump.bz2 | ./database-script-creator.pl db-create.sql role-create.sql tmp postgisdbs.lst | bzip2 -c9 > db-rest.sql.bz2
+	bzcat db-dump.bz2 > tmp3
+	./database-script-creator.pl db-create.sql role-create.sql tmp postgisdbs.lst < tmp3 > tmp2
+	rm tmp3
+	bzip2 -c9 < tmp2 > db-rest.sql.bz2
 	sort < tmp > tmp2
 	rm tmp
 	mv tmp2 drop-all.sql
