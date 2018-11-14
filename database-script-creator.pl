@@ -47,33 +47,50 @@ my %postgisdbs      = ();
 while (<STDIN>) {
 	my $line = $_;
 
-	if ( $line =~ m/^CREATE ROLE ([a-z_]*)/ ) {
-		if ( $1 eq "postgres" ) {
+	# Track current database
+	if ( $line =~ m/^\\connect ([a-zA-Z0-9_]*)/ ) {
+		$currentdb = $1;
+	}
 
-			# Don't try to recreate postgres
+	# Put roles in a separate file and create role drops
+	if ( $line =~ m/^CREATE ROLE ([a-z_]*)/ ) {
+
+		# Don't try to recreate postgres
+		if ( $1 eq "postgres" ) {
 			next;    # Go to next line
 		}
 		print DROPS "DROP ROLE IF EXISTS $1;\n";
 		print ROLES $line;
 		next;
 	}
-	if ( $line =~ m/^CREATE DATABASE ([a-z_]*)/ ) {
 
-		# Create databases in a separate script
+	# Create databases in a separate script
+	if ( $line =~ m/^CREATE DATABASE ([a-z0-9_]*)/ ) {
 		print DATABASES $line;
 		print DROPS "DROP DATABASE IF EXISTS $1;\n";
 		next;
 	}
+
+	# Create schemas in the database script
+	if ( $line =~ m/^CREATE SCHEMA ([A-Za-z_]*)/ ) {
+		print DATABASES "\\connect $currentdb\n";
+		print DATABASES $line;
+		next;
+	}
+	
+	# Skip owner to postgres changes - will be running as postgres anyway
+	if ( $line =~ m/^ALTER .* OWNER TO postgres;/ ) {
+		next;
+	}
+
+	# Skip postgis functions
 	if ($currentfunction) {
 		$functionbody .= $line;
 		if ( $line =~ /;\s*$/ ) {
 			$currentfunction = "";
 
-			# Function body ends
+			# Function body ends, remove postgis functions, print others
 			if ( $functionbody =~ m/AS '[^']*postgis/ ) {
-
-				# This is a Postgis function, skipping it completely
-				# but recording the database
 				$postgisdbs{$currentdb} = 1;
 				next;
 			}
@@ -83,7 +100,7 @@ while (<STDIN>) {
 			}
 		}
 		else {
-			# Function body continues
+			# Function body continues, save it but don't print yet
 			next;
 		}
 	}
@@ -93,22 +110,105 @@ while (<STDIN>) {
 		$functionbody = $line;
 		next;
 	}
-	if ( $line =~ m/^\\connect ([a-z_]*)/ ) {
-		$currentdb = $1;
+
+	# Change some definition to create or replace
+	if ( $line =~ m/^CREATE RULE / ) {
+		$line =~ s/^CREATE RULE/CREATE OR REPLACE RULE/;
 	}
+
+	# Remove certain role options not available in pre-9.5 Postgresql
 	if ( $line =~ m/^ALTER ROLE / ) {
-		# Remove certain role options not available in pre-9.5 Postgresql
-		$line =~ s/ NOBYPASSRLS// ;
-		$line =~ s/ BYPASSRLS// ;
+		$line =~ s/ NOBYPASSRLS//;
+		$line =~ s/ BYPASSRLS//;
 	}
+
 	# Remove some other options not available in pre-9.5 Postgresql
 	if ( $line =~ m/^SET ([a-z_]*)/ ) {
-		if ($1 eq "lock_timeout") { next; }
-		if ($1 eq "row_security") { next; }
+		if ( $1 eq "lock_timeout" ) { next; }
+		if ( $1 eq "row_security" ) { next; }
 	}
+
+	# Remove some commands as they are actually defined by Postgis
+	if ( $line =~ m/^CREATE CAST / ) {
+		next;
+	}
+	if ( $line =~ m/^([A-Z]+ [A-Z]+)[A-Z ]* public[.]([a-z0-9_]*)/ ) {
+		my $cmdtype = $1;
+		my $type    = $2;
+
+		# Skip operators and casts completely
+		if ( $cmdtype eq 'CREATE OPERATOR' ) {
+			if ( $line !~ m/;\s$/ ) {
+				while (<STDIN>) {
+					$line = $_;
+					if ( $line =~ m/;\s$/ ) {
+						last;
+					}
+				}
+			}
+			next;
+		}
+		elsif ($cmdtype eq 'CREATE TABLE'
+			|| $cmdtype eq 'ALTER TABLE'
+			|| $cmdtype eq "CREATE VIEW"
+			|| $cmdtype eq "CREATE TYPE"
+			|| $cmdtype eq "CREATE AGGREGATE" )
+		{
+			my @list = ();
+			if (   $cmdtype eq 'CREATE TABLE'
+				|| $cmdtype eq 'CREATE VIEW'
+				|| $cmdtype eq 'ALTER TABLE' )
+			{
+				@list = ( 'geography_columns', 'geometry_columns',
+					'spatial_ref_sys' );
+			}
+			if ( $cmdtype eq 'CREATE TYPE' ) {
+				@list = (
+					'box2d',    'box2df',        'box3d', 'geography',
+					'geometry', 'geometry_dump', 'gidx',  'pgis_abs',
+					'spheroid', 'valid_detail'
+				);
+			}
+			if ( $cmdtype eq 'CREATE AGGREGATE' ) {
+				@list = (
+					'st_3dextent', 'st_accum',
+					'st_collect',  'st_extent',
+					'st_makeline', 'st_memcollect',
+					'st_memunion', 'st_polygonize',
+					'st_union'
+				);
+			}
+			foreach my $reftype (@list) {
+				if ( $type eq $reftype ) {
+
+					# Removing this type, skip lines until ;, if necessary
+					if ( $line !~ m/;\s$/ ) {
+						while (<STDIN>) {
+							$line = $_;
+							if ( $line =~ m/;\s$/ ) {
+								last;
+							}
+						}
+					}
+					$type =
+					  "";    # This indicates we found one of the types listed
+					last;
+				}
+			}
+
+			# Cannot go to next from inner loop, have to do it here
+			if ( !$type ) {
+				next;
+			}
+
+		}
+	}
+
+	# Print the possibly modified line if we got this far
 	print $line ;
 }
 
+# Output databases requiring postgis extensions
 open POSTGIS, ">$ARGV[3]";
 foreach my $db ( sort keys %postgisdbs ) {
 	print POSTGIS "$db\n";
