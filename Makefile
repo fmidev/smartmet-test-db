@@ -18,27 +18,28 @@ INSTALL_DATA = install -p -m 664
 #.PHONY: test rpm
 
 # The rules
-all: drop-all.sql
+all: db-rest.sql.bz2
 
 debug: all
 release: all
 profile: all
 
 clean:
-	rm -f *~ $(SUBNAME)/*~ db-rest.sql.bz2 db-create.sql role-create.sql drop-all.sql postgisdbs.lst
+	rm -f *~ $(SUBNAME)/*~ db-rest.sql.bz2 db-create.sql role-create.sql drop-all.sql postgisdbs.lst db-dump db-rest.sql
 
 install:
 	@mkdir -p $(mydatadir)/test/db
 	cp -v *.sql* postgisdbs.lst $(mydatadir)/test/db
 
-db-rest.sql.bz2 db-create.sql role-create.sql drop-all.sql postgisdbs.lst: db-dump.bz2 database-script-creator.pl Makefile
-	bzcat db-dump.bz2 > tmp3
-	./database-script-creator.pl db-create.sql role-create.sql tmp postgisdbs.lst < tmp3 > tmp2
-	rm tmp3
-	bzip2 -c9 < tmp2 > db-rest.sql.bz2
-	sort < tmp > tmp2
-	rm tmp
-	mv tmp2 drop-all.sql
+db-dump: db-dump.bz2
+	bzcat db-dump.bz2 > db-dump
+
+db-rest.sql.bz2: db-rest.sql
+	bzip2 -c9 < db-rest.sql > db-rest.sql.bz2
+
+db-rest.sql db-create.sql role-create.sql drop-all.sql postgisdbs.lst: db-dump database-script-creator.pl Makefile
+	./database-script-creator.pl db-create.sql role-create.sql drop-all.sql postgisdbs.lst < db-dump > tmp2
+	mv tmp2 db-rest.sql
 
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz # Clean a possible leftover from previous attempt
