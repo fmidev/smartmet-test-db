@@ -50,11 +50,21 @@ psql -f "$fp/${sqlfiles[0]}"
 # Create roles, ignore errors
 psql -f "$fp/${sqlfiles[1]}"
 # Take postgis into use, ignore errors
-for pgdb in `cat ${sqlfiles[3]}` ; do
+tmpf="`mktemp`"
+for pgdb in `cat "$fp/${sqlfiles[3]}"` ; do
 	for pgfile in ${postgisfiles[*]} ; do
-		psql -f "$pgfile" $pgdb
-	done	
+		psql -f "$pgfile" $pgdb && echo "$pgdb: $pgfile" >> $tmpf
+	done
 done
+if [ `wc -l < $tmpf` -lt ${#postgisfiles[@]} ] ; then
+	echo "Failed to add Postgis extensions to any database!"
+	rm -f "$tmpf"
+	exit 10
+fi
+echo "Postgis added:"
+cat "$tmpf"
+rm -f "$tmpf"
+
 # Create rest of the database, do not ignore errors
 tmpf="`mktemp`db.sql"
 bzcat < "$fp/${sqlfiles[2]}" > "$tmpf"
