@@ -64,8 +64,11 @@ test:
 		echo "Running make test outside of CI will destroy local(or PGHOST) database contents!" ; \
 		echo "If you are sure, set environment CI=true" ; false )
 	test ! -d /usr/share/smartmet/test/db || make testinstall
-	$(pginit)
-	$(dbinst)
+	PGPORT=12543 $(pginit)
+	ps ax | grep -q 'postgres -D [/]*'
+	PGPORT=12543 $(pginit) stop
+	PGPORT=12543 $(pginit)
+	PGPORT=12543 $(dbinst)
 	#rpm -ql smartmet-test-db
 
 testinstall:

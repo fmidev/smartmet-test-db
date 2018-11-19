@@ -2,6 +2,7 @@
 
 export PGHOST=${PGHOST-localhost}
 export PGDATA=${PGDATA-/var/lib/pgsql/data}
+export PGPORT=${PGPORT-5432}
 
 if ! psql --help >/dev/null 2>&1 ; then
 	echo "No psql command installed/found!" >&2
@@ -33,10 +34,18 @@ if [ "$PGHOST" = "localhost" ] ; then
 	fi
 
 	# Start database cluster if it is not running
-	if ! sudo -u postgres pg_ctl status -D "$PGDATA" >/dev/null ; then
-		if ! sudo -u postgres pg_ctl -w -s -D "$PGDATA" start ; then
+	if ! sudo -u postgres pg_ctl status -D "$PGDATA" -o "-p $PGPORT" >/dev/null ; then
+		if ! sudo -u postgres pg_ctl -w -s -D "$PGDATA" -o "-F -p $PGPORT" start ; then
 			echo "$0: Unable to start Postgresql server"
 			exit 4
+		fi
+	fi
+
+	# Stop instead
+	if [ "$1" = "stop" ] ; then
+		if ! sudo -u postgres pg_ctl -w -s -D "$PGDATA" -o "-p $PGPORT" stop ; then
+			echo "$0: Unable to stop Postgresql server"
+			exit 5
 		fi
 	fi
 fi
