@@ -2,6 +2,7 @@
 
 
 export PGHOST=${PGHOST-localhost}
+export PGPORT=${PGPORT-5432}
 export PGDATA=${PGDATA-/var/lib/pgsql/data}
 PGUSER=postgres
 export PGUSER
