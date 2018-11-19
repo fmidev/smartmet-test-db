@@ -46,6 +46,21 @@ for sqlf in ${sqlfiles[*]} ; do
 	fi
 done
 
+# Check CLI paramaters
+case $1 in
+	drop*)
+		psql --set ON_ERROR_STOP=on -f "$fp/${sqlfiles[4]}"
+		if [ "$?" != "0" ] ; then
+			echo "Drop script $fp/${sqlfiles[4]} failed to work - should work always."
+			exit 5
+		fi
+		# Only drop, don't continue
+		if [ "$1" = "droponly" ] ; then
+			exit 0
+		fi
+		;;
+esac
+
 # Create database, ignore erros
 psql -f "$fp/${sqlfiles[0]}"
 # Create roles, ignore errors

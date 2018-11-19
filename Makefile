@@ -38,7 +38,9 @@ db-rest.sql.bz2: db-rest.sql
 	bzip2 -c9 < db-rest.sql > db-rest.sql.bz2
 
 db-rest.sql db-create.sql role-create.sql drop-all.sql postgisdbs.lst: db-dump database-script-creator.pl Makefile
-	./database-script-creator.pl db-create.sql role-create.sql drop-all.sql postgisdbs.lst < db-dump > tmp2
+	./database-script-creator.pl db-create.sql role-create.sql tmp3 postgisdbs.lst < db-dump > tmp2
+	sort < tmp3 > drop-all.sql
+	rm -f tmp3
 	mv tmp2 db-rest.sql
 
 rpm: clean $(SPEC).spec
@@ -64,12 +66,15 @@ test:
 		echo "Running make test outside of CI will destroy local(or PGHOST) database contents!" ; \
 		echo "If you are sure, set environment CI=true" ; false )
 	test ! -d /usr/share/smartmet/test/db || make testinstall
-	PGPORT=12543 $(pginit)
-	ps ax | grep -q 'postgres -D [/]*'
-	PGPORT=12543 $(pginit) stop
-	PGPORT=12543 $(pginit)
-	PGPORT=12543 $(dbinst)
-	#rpm -ql smartmet-test-db
+	PGPORT=12543 $(pginit) # Test init
+	ps ax | grep -q 'postgres -D [/]*' # Check postgres is running
+	PGPORT=12543 $(pginit) stop # Test reinit and stop after that
+	PGPORT=12543 $(pginit) # Should actually just start
+	PGPORT=12543 $(dbinst) drop # Install, possibly dropping previous
+	PGPORT=12543 $(dbinst) droponly # Remove test data
+	PGPORT=12543 $(pginit) stop # Stop db
+	if ( ps ax | grep -q 'postgres -D [/]*' ) ; then true ; fi # Check postgres is not running
+	@echo All tests passed.
 
 testinstall:
 	@echo "Testing installation file count"
