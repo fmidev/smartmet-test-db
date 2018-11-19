@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 18.11.14
+Version: 18.11.19
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -49,5 +49,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
-* Tue Oct 23 2018 Heikki Pernu <heikki.pernu@fmi.fi> - 18.10.23-1.fmi
-- Packaged test data as an RPM
+* Mon Nov 19 2018 Heikki Pernu <heikki.pernu@fmi.fi> - 18.11.19-1.fmi
+- Implement PGPORT support on scripts and add drop and stop functionality
+
+* Wed Nov 14 2018 Heikki Pernu <heikki.pernu@fmi.fi> - 18.11.14-1.fmi
+- Packaged test DB as an RPM
