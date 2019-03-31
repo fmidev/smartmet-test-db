@@ -57,8 +57,8 @@ rpm: clean $(SPEC).spec
 # - insert test data(with error checking)
 # - check something(?)
 # - clean database of test data(with error checking)
-pginit =  $(shell ( ( test "$$CIRCLE_JOB" = "test" && echo $(mydatadir)/test/db/init-and-start.sh ) || echo ./init-and-start.sh ))
-dbinst =  $(shell ( ( test "$$CIRCLE_JOB" = "test" && echo $(mydatadir)/test/db/install-test-db.sh ) || echo ./install-test-db.sh ))
+pginit =  $(shell ( ( test "`echo $$CIRCLE_JOB | cut -f 1 -d -`" = "test" && echo $(mydatadir)/test/db/init-and-start.sh ) || echo ./init-and-start.sh ))
+dbinst =  $(shell ( ( test "`echo $$CIRCLE_JOB | cut -f 1 -d -`" = "test" && echo $(mydatadir)/test/db/install-test-db.sh ) || echo ./install-test-db.sh ))
 
 test:
 	echo "CI=$$CI"
