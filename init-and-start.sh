@@ -17,11 +17,11 @@ if [ "$PGHOST" = "localhost" ] ; then
 		exit 3
 	fi
 	if ! command -v pg_ctl >/dev/null ; then 
-		ecko "No pg_ctl command found. Is this really the server and/or has postgresql installed?" >&2
+		echo "No pg_ctl command found. Is this really the server and/or has postgresql installed?" >&2
 		exit 3
 	fi
 	if ! command -v initdb >/dev/null ; then 
-		ecko "No initdb command found. Is this really the server and/or has postgresql installed?" >&2
+		echo "No initdb command found. Is this really the server and/or has postgresql installed?" >&2
 		exit 3
 	fi
 	
