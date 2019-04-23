@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 19.4.15
+Version: 19.4.23
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -49,7 +49,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
-* Mon Apr 15 2019 Anssi Reponen <anssi.reponen@fmi.fi> - 19.4.15-1.fmi
+* Tue Apr 23 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.4.23-1.fmi
 - Database 'iot_obs' for mobile observations added
 
 * Mon Nov 19 2018 Heikki Pernu <heikki.pernu@fmi.fi> - 18.11.19-1.fmi
