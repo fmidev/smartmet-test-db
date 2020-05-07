@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 19.4.23
+Version: 20.5.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -15,13 +15,13 @@ BuildRequires: bzip2
 BuildRequires: make
 BuildRequires: rpm-build
 #TestRequires: make
-#TestRequires: postgresql-server
-#TestRequires: postgresql-contrib
+#TestRequires: postgresql95-server
+#TestRequires: postgresql95-contrib
 #TestRequires: postgis
 #TestRequires: bzip2
 Provides: %{LIBNAME}
-Requires: postgresql-contrib
-Requires: postgresql-server
+Requires: postgresql95-contrib
+Requires: postgresql95-server
 Requires: postgis
 Requires: bzip2
 
@@ -49,6 +49,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Thu May  7 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.5.7-1.fmi
+- Fixed dependencies to be on pgdg95
+
 * Tue Apr 23 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.4.23-1.fmi
 - Database 'iot_obs' for mobile observations added
 
