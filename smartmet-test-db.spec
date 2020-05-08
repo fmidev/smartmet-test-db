@@ -17,12 +17,12 @@ BuildRequires: rpm-build
 #TestRequires: make
 #TestRequires: postgresql95-server
 #TestRequires: postgresql95-contrib
-#TestRequires: postgis
+#TestRequires: postgis30_95
 #TestRequires: bzip2
 Provides: %{LIBNAME}
 Requires: postgresql95-contrib
 Requires: postgresql95-server
-Requires: postgis
+Requires: postgis30_95
 Requires: bzip2
 
 %description
