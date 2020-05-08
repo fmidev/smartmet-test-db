@@ -7,11 +7,11 @@ export PGDATA=${PGDATA-/var/lib/pgsql/data}
 PGUSER=postgres
 export PGUSER
 
-if ! psql --help >/dev/null 2>&1 ; then
-	echo "No psql command installed/found!" >&2
+if ! /usr/pgsql-9.5/bin/psql --help >/dev/null 2>&1 ; then
+	echo "No /usr/pgsql-9.5/bin/psql command installed/found!" >&2
 	exit 1
 fi
-if ! psql -c 'SELECT 1;' >/dev/null ; then
+if ! /usr/pgsql-9.5/bin/psql -c 'SELECT 1;' >/dev/null ; then
 	echo "Unable to connect to Postgresql server on $PGHOST as user $PGUSER" >&2
 	echo "Is the server running?" >&2
 	exit 2
@@ -49,7 +49,7 @@ done
 # Check CLI paramaters
 case $1 in
 	drop*)
-		psql --set ON_ERROR_STOP=on -f "$fp/${sqlfiles[4]}"
+		/usr/pgsql-9.5/bin/psql --set ON_ERROR_STOP=on -f "$fp/${sqlfiles[4]}"
 		if [ "$?" != "0" ] ; then
 			echo "Drop script $fp/${sqlfiles[4]} failed to work - should work always."
 			exit 5
@@ -62,14 +62,14 @@ case $1 in
 esac
 
 # Create database, ignore erros
-psql -f "$fp/${sqlfiles[0]}"
+/usr/pgsql-9.5/bin/psql -f "$fp/${sqlfiles[0]}"
 # Create roles, ignore errors
-psql -f "$fp/${sqlfiles[1]}"
+/usr/pgsql-9.5/bin/psql -f "$fp/${sqlfiles[1]}"
 # Take postgis into use, ignore errors
 tmpf="`mktemp`"
 for pgdb in `cat "$fp/${sqlfiles[3]}"` ; do
 	for pgfile in ${postgisfiles[*]} ; do
-		psql -f "$pgfile" $pgdb && echo "$pgdb: $pgfile" >> $tmpf
+		/usr/pgsql-9.5/bin/psql -f "$pgfile" $pgdb && echo "$pgdb: $pgfile" >> $tmpf
 	done
 done
 if [ `wc -l < $tmpf` -lt ${#postgisfiles[@]} ] ; then
@@ -84,7 +84,7 @@ rm -f "$tmpf"
 # Create rest of the database, do not ignore errors
 tmpf="`mktemp`db.sql"
 bzcat < "$fp/${sqlfiles[2]}" > "$tmpf"
-psql --set ON_ERROR_STOP=on -f "$tmpf"
+/usr/pgsql-9.5/bin/psql --set ON_ERROR_STOP=on -f "$tmpf"
 r=$?
 rm -f "$tmpf"
 if [ "$r" != "0" ] ; then
