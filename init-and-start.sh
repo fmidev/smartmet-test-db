@@ -12,6 +12,7 @@ fi
 # We only initialize local database: not remote servers
 if [ "$PGHOST" = "localhost" ] ; then
 	# Check prereqs
+        ls -la /usr/pgsql-9.5/bin
 	if ! sudo -u postgres echo ; then
 		echo "Unable to sudo to postgre user. Permissions ok and postgresql server installed?" >&2
 		exit 3
