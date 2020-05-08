@@ -16,26 +16,26 @@ if [ "$PGHOST" = "localhost" ] ; then
 		echo "Unable to sudo to postgre user. Permissions ok and postgresql server installed?" >&2
 		exit 3
 	fi
-	if ! command -v pg_ctl >/dev/null ; then 
-		echo "No pg_ctl command found. Is this really the server and/or has postgresql installed?" >&2
+	if ! command -v /usr/pgsql-9.5/bin/pg_ctl >/dev/null ; then 
+		echo "No /usr/pgsql-9.5/bin/pg_ctl command found. Is this really the server and/or has postgresql installed?" >&2
 		exit 3
 	fi
-	if ! command -v initdb >/dev/null ; then 
-		echo "No initdb command found. Is this really the server and/or has postgresql installed?" >&2
+	if ! command -v /usr/pgsql-9.5/bin/initdb >/dev/null ; then 
+		echo "No /usr/pgsql-9.5/bin/initdb command found. Is this really the server and/or has postgresql installed?" >&2
 		exit 3
 	fi
 	
 	# Create database cluster if it does not exist
 	if ! sudo -u postgres test -e "$PGDATA/PG_VERSION" ; then
-		if ! sudo -u postgres initdb -E "UTF-8" -D "$PGDATA" ; then
-			echo "$0: Initdb failed!" >&2
+		if ! sudo -u postgres /usr/pgsql-9.5/bin/initdb -E "UTF-8" -D "$PGDATA" ; then
+			echo "$0: /Usr/Pgsql-9.5/Bin/Initdb failed!" >&2
 			exit 3
 		fi
 	fi
 
 	# Start database cluster if it is not running
-	if ! sudo -u postgres pg_ctl status -D "$PGDATA" -o "-p $PGPORT" >/dev/null ; then
-		if ! sudo -u postgres pg_ctl -w -s -D "$PGDATA" -o "-F -p $PGPORT" start ; then
+	if ! sudo -u postgres /usr/pgsql-9.5/bin/pg_ctl status -D "$PGDATA" -o "-p $PGPORT" >/dev/null ; then
+		if ! sudo -u postgres /usr/pgsql-9.5/bin/pg_ctl -w -s -D "$PGDATA" -o "-F -p $PGPORT" start ; then
 			echo "$0: Unable to start Postgresql server"
 			exit 4
 		fi
@@ -43,7 +43,7 @@ if [ "$PGHOST" = "localhost" ] ; then
 
 	# Stop instead
 	if [ "$1" = "stop" ] ; then
-		if ! sudo -u postgres pg_ctl -w -s -D "$PGDATA" -o "-p $PGPORT" stop ; then
+		if ! sudo -u postgres /usr/pgsql-9.5/bin/pg_ctl -w -s -D "$PGDATA" -o "-p $PGPORT" stop ; then
 			echo "$0: Unable to stop Postgresql server"
 			exit 5
 		fi
