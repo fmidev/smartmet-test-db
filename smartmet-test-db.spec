@@ -4,7 +4,7 @@
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
 Version: 20.6.9
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-test-db
@@ -15,13 +15,13 @@ BuildRequires: bzip2
 BuildRequires: make
 BuildRequires: rpm-build
 #TestRequires: make
-#TestRequires: postgresql-server
-#TestRequires: postgresql-contrib
+#TestRequires: postgresql-server < 9.5
+#TestRequires: postgresql-contrib < 9.5
 #TestRequires: postgis < 3
 #TestRequires: bzip2
 Provides: %{LIBNAME}
-Requires: postgresql-contrib
-Requires: postgresql-server
+Requires: postgresql-contrib < 9.5
+Requires: postgresql-server < 9.5
 Requires: postgis < 3
 Requires: bzip2
 
@@ -49,6 +49,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Tue Jun  9 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.9-3.fmi
+- Require postgresql < 9.5 from EPEL
+
 * Tue Jun  9 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.9-2.fmi
 - Require postgis < 3 from EPEL instead of pgdg95 version
 
