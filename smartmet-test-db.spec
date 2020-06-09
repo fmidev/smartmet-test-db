@@ -15,13 +15,13 @@ BuildRequires: bzip2
 BuildRequires: make
 BuildRequires: rpm-build
 #TestRequires: make
-#TestRequires: postgresql95-server
-#TestRequires: postgresql95-contrib
+#TestRequires: postgresql-server
+#TestRequires: postgresql-contrib
 #TestRequires: postgis
 #TestRequires: bzip2
 Provides: %{LIBNAME}
-Requires: postgresql95-contrib
-Requires: postgresql95-server
+Requires: postgresql-contrib
+Requires: postgresql-server
 Requires: postgis
 Requires: bzip2
 
