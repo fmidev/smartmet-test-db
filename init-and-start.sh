@@ -2,7 +2,7 @@
 
 export PGHOST=${PGHOST-localhost}
 export PGDATA=${PGDATA-/var/lib/pgsql/data}
-export PGPORT=${PGPORT-5432}
+export PGPORT=${PGPORT-5444}
 
 if ! /usr/bin/psql --help >/dev/null 2>&1 ; then
 	echo "No /usr/bin/psql command installed/found!" >&2

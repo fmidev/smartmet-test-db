@@ -1,8 +1,7 @@
 #!/bin/bash
 
-
 export PGHOST=${PGHOST-localhost}
-export PGPORT=${PGPORT-5432}
+export PGPORT=${PGPORT-5444}
 export PGDATA=${PGDATA-/var/lib/pgsql/data}
 PGUSER=postgres
 export PGUSER
