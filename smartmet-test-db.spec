@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 20.10.27
+Version: 20.11.3
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -49,6 +49,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Tue Nov  3 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.11.3-1.fmi
+- Updated db-dump.bz2 by dumping the Docker contents
+
 * Tue Oct 27 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.27-1.fmi
 - Run test database in port 5444
 
