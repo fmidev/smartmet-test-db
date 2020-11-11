@@ -17,3 +17,6 @@ db-rest.sql
 
 # May come as a result of CI System local testing
 dist/
+
+/pgdata
+/tmp

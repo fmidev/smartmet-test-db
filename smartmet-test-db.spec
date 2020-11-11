@@ -30,11 +30,18 @@ FMI postgresql database contents and test data installation script.
 Database is NOT automatically populated on installing this package.
 Use installed script to instead.
 
+%package bin
+Summary: FMI postgresql database contents as PostgreSQL database
+Requires: postgresql-server
+
+%description bin
+FMI postgresql database contents as PostgreSQL database
+
 %prep
 rm -rf $RPM_BUILD_ROOT
 
 %setup -q -n %{SPECNAME}
- 
+
 %build
 make %{_smp_mflags}
 
@@ -47,6 +54,10 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(0775,root,root,0775)
 %{_datadir}/smartmet/test/db/*
+
+%files bin
+%attr(0700,postgres,postgres) %{_localstatedir}/lib/%{SPECNAME}/*
+%attr(0755,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
 * Tue Nov  3 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.11.3-1.fmi

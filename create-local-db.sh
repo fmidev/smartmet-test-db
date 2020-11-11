@@ -5,11 +5,11 @@ set -x
 rm -rf tmp
 
 export PGDATA=$(pwd)/pgdata
-export PGPORT=5444
+export PGPORT=15444
 
 INITDB="initdb --pgdata $PGDATA -U postgres"
 POSTGRES_PARAM="-k /tmp -p $PGPORT -F"
-PSQL="psql -p 5444 -h 127.0.0.1 -U postgres"
+PSQL="psql -p $PGPORT -h 127.0.0.1 -U postgres"
 PSQL_NOERR="$PSQL --set ON_ERROR_STOP=on"
 
 postgisfiles=(\
