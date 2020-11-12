@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 20.11.3
+Version: 20.11.12
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -11,6 +11,8 @@ URL: https://github.com/fmidev/smartmet-test-db
 Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
+BuildRequires: postgresql-contrib < 9.5
+BuildRequires: postgresql-server < 9.5
 BuildRequires: bzip2
 BuildRequires: make
 BuildRequires: rpm-build
@@ -51,6 +53,14 @@ make %{_smp_mflags}
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%postun bin
+systemctl enable smartmet-test-db
+systemctl start smartmet-test-db
+
+%preun bin
+systemctl disable smartmet-test-db
+systemctl stop smartmet-test-db
+
 %files
 %defattr(0775,root,root,0775)
 %{_datadir}/smartmet/test/db/*
@@ -60,6 +70,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(0755,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
+* Thu Nov 12 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.11.12-1.fmi
+- Package built database into a separate RPM package
+
 * Tue Nov  3 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.11.3-1.fmi
 - Updated db-dump.bz2 by dumping the Docker contents
 
