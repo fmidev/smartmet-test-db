@@ -37,7 +37,8 @@ s-local-db:
 
 install:
 	mkdir -p $(mydatadir)/test/db
-	cp -v db-create.sql role-create.sql drop-all.sql postgisdbs.lst *.sql.bz2 *.sh $(mydatadir)/test/db
+	cp -v db-create.sql role-create.sql drop-all.sql postgisdbs.lst *.sql.bz2 $(mydatadir)/test/db
+	cp -v init-and-start.sh install-test-db.sh $(mydatadir)/test/db
 	mkdir -p $(mypgdir)
 	( tar cv pgdata ) | ( cd $(mypgdir) && tar x )
 	mkdir -p $(prefix)/lib/systemd/system
