@@ -29,7 +29,8 @@ clean:
 
 install:
 	mkdir -p $(mydatadir)/test/db
-	cp -v db-create.sql role-create.sql drop-all.sql postgisdbs.lst *.sql.bz2 *.sh $(mydatadir)/test/db
+	cp -v db-create.sql role-create.sql drop-all.sql postgisdbs.lst *.sql.bz2 $(mydatadir)/test/db
+	cp -v init-and-start.sh install-test-db.sh $(mydatadir)/test/db
 
 db-dump: db-dump.bz2
 	bzcat db-dump.bz2 > db-dump
