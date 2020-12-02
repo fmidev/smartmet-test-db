@@ -2,10 +2,14 @@
 
 set -x
 
-rm -rf tmp
+if [ -z $1 ] ; then
+    export PGDATA=$(pwd)/tmp-db
+else
+    export PGDATA=$1
+fi
 
-export PGDATA=$(pwd)/pgdata
 export PGPORT=15444
+prefix=$(dirname $0)
 
 INITDB="initdb --pgdata $PGDATA -U postgres"
 POSTGRES_PARAM="-k /tmp -p $PGPORT -F"
@@ -17,7 +21,7 @@ postgisfiles=(\
             /usr/share/pgsql/contrib/postgis-2.0/topology.sql \
             /usr/share/pgsql/contrib/postgis-2.0/rtpostgis.sql)
 
-sqlfiles=(db-create.sql role-create.sql db-rest.sql postgisdbs.lst drop-all.sql)
+sqlfiles=(db-create.sql role-create.sql db-rest.sql.bz2 postgisdbs.lst drop-all.sql)
 
 stop_database() {
     pg_ctl --pgdata=$PGDATA -o "-k /tmp -p $PGPORT" stop
@@ -49,20 +53,14 @@ if [ -f $PGDATA/postmaster.pid ] ; then
     fi
 fi
 
-mkdir -p tmp
-bzip2 -cd db-dump.bz2 | ./database-script-creator.pl tmp/db-create.sql tmp/role-create.sql tmp/tmp3 tmp/postgisdbs.lst >tmp/tmp2
-cat tmp/tmp3 | sort >tmp/drop-all.sql
-rm -f tmp/tmp3
-mv tmp/tmp2 tmp/db-rest.sql
-
 sqlfiles_missing=
-for sqlfile in ${sqlfiles[*]}; do test -f tmp/$sqlfile || sqlfiles_missing="$sqlfiles_missing $sqlfile"; done
+for sqlfile in ${sqlfiles[*]}; do test -f $prefix/$sqlfile || sqlfiles_missing="$sqlfiles_missing $sqlfile"; done
 if ! [ -z "$sqlfiles_missing" ] ; then
     echo "Data files not found:\n $sqlfiles_missing\n"
     exit 1
 fi
 
-rm -rf pgdata
+rm -rf tmp-db
 if ! $INITDB ; then
     echo "Failed to create PostgreSQL database cluster"
     exit 1
@@ -71,7 +69,6 @@ fi
 cleanup() {
     echo "Stopping Postgresql server..."
     pg_ctl --pgdata=$PGDATA -o "-k /tmp -p $PGPORT" stop
-    rm -rf tmp
 }
 
 if pg_ctl --pgdata=$PGDATA -o "-k /tmp -p $PGPORT -F" start ; then
@@ -91,16 +88,17 @@ if ! $PSQL -c 'SELECT 1;' >/dev/null 2>&1 ; then
 fi
 
 # Create database, ignore erros
-$PSQL -f tmp/${sqlfiles[0]}
+$PSQL -f ${prefix}/${sqlfiles[0]}
 
 # Create roles, ignore errors
-$PSQL -f tmp//${sqlfiles[1]}
+$PSQL -f ${prefix}/${sqlfiles[1]}
 
 # Take postgis into use, ignore errors
 tmpf="`mktemp`"
-for pgdb in $(cat tmp/${sqlfiles[3]}) ; do
+for pgdb in $(cat ${prefix}/${sqlfiles[3]}) ; do
 	for pgfile in ${postgisfiles[*]} ; do
-		$PSQL -f "$pgfile" $pgdb && echo "$pgdb: $pgfile" >> $tmpf
+	        case "$pgfile" in *.bzip2) bzip2 -cd $pgfile ;; *) cat $pgfile ;; esac |\
+		$PSQL $pgdb && echo "$pgdb: $pgfile" >> $tmpf
 	done
 done
 if [ $(wc -l < $tmpf) -lt ${#postgisfiles[@]} ] ; then
@@ -114,7 +112,7 @@ rm -f "$tmpf"
 
 # Create rest of the database, do not ignore errors
 tmpf="`mktemp`db.sql"
-if ! $PSQL --set ON_ERROR_STOP=on -f tmp/${sqlfiles[2]} ; then
+if ! bzip2 -cd ${prefix}/${sqlfiles[2]} | $PSQL --set ON_ERROR_STOP=on ; then
     echo "Failed to populate database, please consider dropping everything and retrying" >&2
     exit 6
 fi

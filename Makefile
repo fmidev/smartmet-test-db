@@ -80,4 +80,4 @@ testinstall:
 	@echo "Testing installation file count"
 	ls -l /usr/share/smartmet/test/db/
 	test `ls /usr/share/smartmet/test/db/*.sql* | wc -l` = "4"
-	test `ls /usr/share/smartmet/test/db/*.sh | wc -l` = "2"
+	test `ls /usr/share/smartmet/test/db/*.sh | wc -l` = "4"
