@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 20.11.12
+Version: 20.12.02
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -51,6 +51,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Wed Dec 02 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.12.02-1.fmi
+- No more generate prebuilt database as a separate RPM package
+
 * Thu Nov 12 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.11.12-1.fmi
 - Package built database into a separate RPM package
 
