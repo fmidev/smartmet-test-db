@@ -7,11 +7,8 @@ ifeq ($(origin PREFIX), undefined)
 else
   PREFIX = $(PREFIX)
 endif
-prefix = $(PREFIX)
 datadir = $(PREFIX)/share
 mydatadir = $(datadir)/smartmet
-localstatedir = $(datadir)/var
-mypgdir = $(localstatedir)/lib/$(SPEC)
 objdir = obj
 
 # How to install
@@ -21,7 +18,7 @@ INSTALL_DATA = install -p -m 664
 #.PHONY: test rpm
 
 # The rules
-all: db-rest.sql.bz2 s-local-db
+all: db-rest.sql.bz2
 
 debug: all
 release: all
@@ -29,20 +26,10 @@ profile: all
 
 clean:
 	rm -f *~ $(SUBNAME)/*~ db-rest.sql.bz2 db-create.sql role-create.sql drop-all.sql postgisdbs.lst db-dump db-rest.sql
-	rm -rf tmp pgdata
-
-s-local-db:
-	./create-local-db.sh
-	touch s-local-db
 
 install:
 	mkdir -p $(mydatadir)/test/db
-	cp -v db-create.sql role-create.sql drop-all.sql postgisdbs.lst *.sql.bz2 $(mydatadir)/test/db
-	cp -v init-and-start.sh install-test-db.sh $(mydatadir)/test/db
-	mkdir -p $(mypgdir)
-	( tar cv pgdata ) | ( cd $(mypgdir) && tar x )
-	mkdir -p $(prefix)/lib/systemd/system
-	cp -p smartmet-test-db.service $(prefix)/lib/systemd/system/
+	cp -v db-create.sql role-create.sql drop-all.sql postgisdbs.lst *.sql.bz2 *.sh $(mydatadir)/test/db
 
 db-dump: db-dump.bz2
 	bzcat db-dump.bz2 > db-dump
