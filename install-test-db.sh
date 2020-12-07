@@ -6,8 +6,6 @@ export PGDATA=${PGDATA-/var/lib/pgsql/data}
 PGUSER=postgres
 export PGUSER
 
-export libdir=/usr/pgsql-9.5/lib
-
 if ! psql --help >/dev/null 2>&1 ; then
 	echo "No psql command installed/found!" >&2
 	exit 1
