@@ -17,9 +17,9 @@ PSQL="psql -p $PGPORT -h 127.0.0.1 -U postgres"
 PSQL_NOERR="$PSQL --set ON_ERROR_STOP=on"
 
 postgisfiles=(\
-            /usr/share/pgsql/contrib/postgis-64.sql \
-            /usr/share/pgsql/contrib/postgis-2.0/topology.sql \
-            /usr/share/pgsql/contrib/postgis-2.0/rtpostgis.sql)
+            /usr/pgsql-9.5/share/contrib/postgis-2.4/postgis.sql \
+            /usr/pgsql-9.5/share/contrib/postgis-2.4/topology.sql \
+            /usr/pgsql-9.5/share/contrib/postgis-2.4/rtpostgis.sql)
 
 sqlfiles=(db-create.sql role-create.sql db-rest.sql.bz2 postgisdbs.lst drop-all.sql)
 
