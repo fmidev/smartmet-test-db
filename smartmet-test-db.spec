@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 20.12.02
+Version: 20.12.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -11,20 +11,20 @@ URL: https://github.com/fmidev/smartmet-test-db
 Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
-BuildRequires: postgresql-contrib < 9.5
-BuildRequires: postgresql-server < 9.5
+BuildRequires: postgresql95-contrib
+BuildRequires: postgresql95-server
 BuildRequires: bzip2
 BuildRequires: make
 BuildRequires: rpm-build
 #TestRequires: make
-#TestRequires: postgresql-server < 9.5
-#TestRequires: postgresql-contrib < 9.5
-#TestRequires: postgis < 3
+#TestRequires: postgresql95-server
+#TestRequires: postgresql95-contrib
+#TestRequires: postgis24_95
 #TestRequires: bzip2
 Provides: %{LIBNAME}
-Requires: postgresql-contrib < 9.5
-Requires: postgresql-server < 9.5
-Requires: postgis < 3
+Requires: postgresql95-contrib
+Requires: postgresql95-server
+Requires: postgis24_95
 Requires: bzip2
 
 %description
@@ -43,6 +43,9 @@ make %{_smp_mflags}
 %install
 %makeinstall
 
+%post
+/usr/share/smartmet/test/db/init-and-start.sh && /usr/share/smartmet/test/db/install-test-db.sh
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -51,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Mon Dec  7 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.7-1.fmi
+- Start the test database automatically when installed from the RPM
+
 * Wed Dec 02 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.12.02-1.fmi
 - No more generate prebuilt database as a separate RPM package
 

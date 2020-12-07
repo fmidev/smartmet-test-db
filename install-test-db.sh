@@ -2,21 +2,23 @@
 
 export PGHOST=${PGHOST-localhost}
 export PGPORT=${PGPORT-5444}
-export PGDATA=${PGDATA-/var/lib/pgsql/data}
+export PGDATA=${PGDATA-/var/lib/pgsql/9.5/data}
 PGUSER=postgres
 export PGUSER
 
-if ! psql --help >/dev/null 2>&1 ; then
+PSQL=/usr/pgsql-9.5/bin/psql
+
+if ! $PSQL --help >/dev/null 2>&1 ; then
 	echo "No psql command installed/found!" >&2
 	exit 1
 fi
-if ! psql -c 'SELECT 1;' >/dev/null ; then
+if ! $PSQL -c 'SELECT 1;' >/dev/null ; then
 	echo "Unable to connect to Postgresql server on $PGHOST as user $PGUSER" >&2
 	echo "Is the server running?" >&2
 	exit 2
 fi
 
-postgisfiles=(/usr/share/pgsql/contrib/postgis-64.sql /usr/share/pgsql/contrib/postgis-2.0/topology.sql /usr/share/pgsql/contrib/postgis-2.0/rtpostgis.sql)
+postgisfiles=(/usr/pgsql-9.5/share/contrib/postgis-2.4/postgis.sql /usr/pgsql-9.5/share/contrib/postgis-2.4/topology.sql /usr/pgsql-9.5/share/contrib/postgis-2.4/rtpostgis.sql)
 for pgfile in ${postgisfiles[*]} ; do
 	if [ ! -r "$pgfile" ] ; then
 		echo "$pgfile is unreadable. Is postgis installed?" >&2
@@ -48,7 +50,7 @@ done
 # Check CLI paramaters
 case $1 in
 	drop*)
-		psql --set ON_ERROR_STOP=on -f "$fp/${sqlfiles[4]}"
+		$PSQL --set ON_ERROR_STOP=on -f "$fp/${sqlfiles[4]}"
 		if [ "$?" != "0" ] ; then
 			echo "Drop script $fp/${sqlfiles[4]} failed to work - should work always."
 			exit 5
@@ -61,14 +63,14 @@ case $1 in
 esac
 
 # Create database, ignore erros
-psql -f "$fp/${sqlfiles[0]}"
+$PSQL -f "$fp/${sqlfiles[0]}"
 # Create roles, ignore errors
-psql -f "$fp/${sqlfiles[1]}"
+$PSQL -f "$fp/${sqlfiles[1]}"
 # Take postgis into use, ignore errors
 tmpf="`mktemp`"
 for pgdb in `cat "$fp/${sqlfiles[3]}"` ; do
 	for pgfile in ${postgisfiles[*]} ; do
-		psql -f "$pgfile" $pgdb && echo "$pgdb: $pgfile" >> $tmpf
+		$PSQL -f "$pgfile" $pgdb && echo "$pgdb: $pgfile" >> $tmpf
 	done
 done
 if [ `wc -l < $tmpf` -lt ${#postgisfiles[@]} ] ; then
@@ -83,7 +85,7 @@ rm -f "$tmpf"
 # Create rest of the database, do not ignore errors
 tmpf="`mktemp`db.sql"
 bzcat < "$fp/${sqlfiles[2]}" > "$tmpf"
-psql --set ON_ERROR_STOP=on -f "$tmpf"
+$PSQL --set ON_ERROR_STOP=on -f "$tmpf"
 r=$?
 rm -f "$tmpf"
 if [ "$r" != "0" ] ; then
