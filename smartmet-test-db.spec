@@ -11,20 +11,37 @@ URL: https://github.com/fmidev/smartmet-test-db
 Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
+%if 0%{rhel} >= 8
+BuildRequires: postgresql12-contrib
+BuildRequires: postgresql12-server
+%else
 BuildRequires: postgresql-contrib < 9.5
 BuildRequires: postgresql-server < 9.5
+%endif
 BuildRequires: bzip2
 BuildRequires: make
 BuildRequires: rpm-build
 #TestRequires: make
+%if 0%{rhel} >= 8
+#TestRequires: postgresql12-contrib
+#TestRequires: postgresql12-server
+#TestRequires: postgis30_12
+%else
 #TestRequires: postgresql-server < 9.5
 #TestRequires: postgresql-contrib < 9.5
 #TestRequires: postgis < 3
+%endif
 #TestRequires: bzip2
 Provides: %{LIBNAME}
+%if 0%{rhel} >= 8
+Requires: postgresql12-contrib
+Requires: postgresql12-server
+Requires: postgis30_12
+%else
 Requires: postgresql-contrib < 9.5
 Requires: postgresql-server < 9.5
 Requires: postgis < 3
+%endif
 Requires: bzip2
 
 %description
