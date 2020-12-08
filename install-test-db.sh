@@ -16,7 +16,7 @@ if ! psql -c 'SELECT 1;' >/dev/null ; then
 	exit 2
 fi
 
-postgisfiles=(/usr/pgsql-9.5/share/contrib/postgis-2.4/postgis.sql /usr/pgsql-9.5/share/contrib/postgis-2.4/topology.sql /usr/pgsql-9.5/share/contrib/postgis-2.4/rtpostgis.sql)
+postgisfiles=(/usr/share/pgsql/contrib/postgis-64.sql /usr/share/pgsql/contrib/postgis-2.0/topology.sql /usr/share/pgsql/contrib/postgis-2.0/rtpostgis.sql)
 for pgfile in ${postgisfiles[*]} ; do
 	if [ ! -r "$pgfile" ] ; then
 		echo "$pgfile is unreadable. Is postgis installed?" >&2
