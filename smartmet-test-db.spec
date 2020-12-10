@@ -4,7 +4,7 @@
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
 Version: 20.12.10
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-test-db
@@ -16,10 +16,10 @@ BuildRequires: postgresql12-contrib
 BuildRequires: postgresql12-server
 #TestRequires: postgresql12-contrib
 #TestRequires: postgresql12-server
-#TestRequires: postgis30_12
+#TestRequires: postgis31_12
 Requires: postgresql12-contrib
 Requires: postgresql12-server
-Requires: postgis30_12
+Requires: postgis31_12
 %else
 BuildRequires: postgresql-contrib < 9.5
 BuildRequires: postgresql-server < 9.5
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Thu Dec 10 2020 Mika Heiskanen <mheiskan@rhel8.dev.fmi.fi> - 20.12.10-2.fmi
+- Updated RHEL8 dependency to postgis31_12
+
 * Thu Dec 10 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.10-1.fmi
 - Updated dependencies
 
