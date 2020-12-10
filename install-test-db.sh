@@ -8,12 +8,12 @@ export PGUSER
 
 # Establish PGDG paths and the postgis files to be executed when initializing the db
 
-if [ -x /usr/psql-12/bin/pg_ctl ]; then
-  export PATH=$PATH:/usr/psql-12/bin
+if [ -x /usr/pgsql-12/bin/pg_ctl ]; then
+  export PATH=$PATH:/usr/pgsql-12/bin
   pgpath=/usr/pgsql-12/share/contrib/postgis-3.0/
   postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
-elif [ -x /usr/psql-9.5/bin/pg_ctl ]; then
-  export PATH=$PATH:/usr/psql-9.5/bin
+elif [ -x /usr/pgsql-9.5/bin/pg_ctl ]; then
+  export PATH=$PATH:/usr/pgsql-9.5/bin
   pgpath=/usr/pgsql-9.5/share/contrib/postgis-2.4/
   postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
 else

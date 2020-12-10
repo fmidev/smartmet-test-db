@@ -6,10 +6,10 @@ export PGPORT=${PGPORT-5444}
 
 # Establish PGDG paths
 
-if [ -x /usr/psql-12/bin/pg_ctl ]; then
-  export PATH=$PATH:/usr/psql-12/bin
-elif [ -x /usr/psql-9.5/bin/pg_ctl ]; then
-  export PATH=$PATH:/usr/psql-9.5/bin
+if [ -x /usr/pgsql-12/bin/pg_ctl ]; then
+  export PATH=$PATH:/usr/pgsql-12/bin
+elif [ -x /usr/pgsql-9.5/bin/pg_ctl ]; then
+  export PATH=$PATH:/usr/pgsql-9.5/bin
 fi
 
 if ! psql --help >/dev/null 2>&1 ; then
