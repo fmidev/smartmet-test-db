@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 export PGHOST=${PGHOST-localhost}
 export PGDATA=${PGDATA-/var/lib/pgsql/data}

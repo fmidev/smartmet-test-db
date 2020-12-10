@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 export PGHOST=${PGHOST-localhost}
 export PGPORT=${PGPORT-5444}
