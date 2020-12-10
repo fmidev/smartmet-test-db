@@ -36,7 +36,7 @@ if [ "$PGHOST" = "localhost" ] ; then
 	
 	# Create database cluster if it does not exist
 	if ! sudo -u postgres test -e "$PGDATA/PG_VERSION" ; then
-		if ! sudo -u postgres initdb -E "UTF-8" -D "$PGDATA" ; then
+		if ! sudo -u postgres env "PATH=$PATH" initdb -E "UTF-8" -D "$PGDATA" ; then
 			echo "$0: initdb failed!" >&2
 			exit 3
 		fi
@@ -44,7 +44,7 @@ if [ "$PGHOST" = "localhost" ] ; then
 
 	# Start database cluster if it is not running
 	if ! sudo -u postgres pg_ctl status -D "$PGDATA" -o "-p $PGPORT" >/dev/null ; then
-		if ! sudo -u postgres pg_ctl -w -s -D "$PGDATA" -o "-F -p $PGPORT" start ; then
+		if ! sudo -u postgres env "PATH=$PATH" pg_ctl -w -s -D "$PGDATA" -o "-F -p $PGPORT" start ; then
 			echo "$0: Unable to start Postgresql server"
 			exit 4
 		fi
@@ -52,7 +52,7 @@ if [ "$PGHOST" = "localhost" ] ; then
 
 	# Stop instead
 	if [ "$1" = "stop" ] ; then
-		if ! sudo -u postgres pg_ctl -w -s -D "$PGDATA" -o "-p $PGPORT" stop ; then
+		if ! sudo -u postgres env "PATH=$PATH" pg_ctl -w -s -D "$PGDATA" -o "-p $PGPORT" stop ; then
 			echo "$0: Unable to stop Postgresql server"
 			exit 5
 		fi
