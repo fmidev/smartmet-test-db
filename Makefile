@@ -46,7 +46,7 @@ db-rest.sql db-create.sql role-create.sql drop-all.sql postgisdbs.lst: db-dump d
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz dist/* # Clean a possible leftover from previous attempt
 	tar -czvf $(SPEC).tar.gz --transform "s,^,$(SPEC)/," *
-	rpmbuild -ta $(SPEC).tar.gz
+	rpmbuild -tb $(SPEC).tar.gz
 	rm -f $(SPEC).tar.gz
 
 # Test:
