@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 20.12.9
+Version: 20.12.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Thu Dec 10 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.10-1.fmi
+- Updated dependencies
+
 * Wed Dec  9 2020 Mika Heiskanen <mheiskan@rhel8.dev.fmi.fi> - 20.12.9-1.fmi
 - Improved RHEL and PGDG version support
 
