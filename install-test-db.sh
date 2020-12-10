@@ -6,6 +6,22 @@ export PGDATA=${PGDATA-/var/lib/pgsql/data}
 PGUSER=postgres
 export PGUSER
 
+# Establish PGDG paths and the postgis files to be executed when initializing the db
+
+if [ -x /usr/psql-12/bin/pg_ctl ]; then
+  export PATH=$PATH:/usr/psql-12/bin
+  pgpath=/usr/pgsql-12/share/contrib/postgis-3.0/
+  postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
+elif [ -x /usr/psql-9.5/bin/pg_ctl ]; then
+  export PATH=$PATH:/usr/psql-9.5/bin
+  pgpath=/usr/pgsql-9.5/share/contrib/postgis-2.4/
+  postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
+else
+  postgisfiles=(/usr/share/pgsql/contrib/postgis-64.sql /usr/share/pgsql/contrib/postgis-2.0/topology.sql /usr/share/pgsql/contrib/postgis-2.0/rtpostgis.sql)
+fi
+
+# Verify required commands and scripts exist
+
 if ! psql --help >/dev/null 2>&1 ; then
 	echo "No psql command installed/found!" >&2
 	exit 1
@@ -16,7 +32,6 @@ if ! psql -c 'SELECT 1;' >/dev/null ; then
 	exit 2
 fi
 
-postgisfiles=(/usr/share/pgsql/contrib/postgis-64.sql /usr/share/pgsql/contrib/postgis-2.0/topology.sql /usr/share/pgsql/contrib/postgis-2.0/rtpostgis.sql)
 for pgfile in ${postgisfiles[*]} ; do
 	if [ ! -r "$pgfile" ] ; then
 		echo "$pgfile is unreadable. Is postgis installed?" >&2
@@ -61,10 +76,15 @@ case $1 in
 esac
 
 # Create database, ignore erros
+
 psql -f "$fp/${sqlfiles[0]}"
+
 # Create roles, ignore errors
+
 psql -f "$fp/${sqlfiles[1]}"
+
 # Take postgis into use, ignore errors
+
 tmpf="`mktemp`"
 for pgdb in `cat "$fp/${sqlfiles[3]}"` ; do
 	for pgfile in ${postgisfiles[*]} ; do
@@ -81,6 +101,7 @@ cat "$tmpf"
 rm -f "$tmpf"
 
 # Create rest of the database, do not ignore errors
+
 tmpf="`mktemp`db.sql"
 bzcat < "$fp/${sqlfiles[2]}" > "$tmpf"
 psql --set ON_ERROR_STOP=on -f "$tmpf"

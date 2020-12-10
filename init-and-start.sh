@@ -4,8 +4,16 @@ export PGHOST=${PGHOST-localhost}
 export PGDATA=${PGDATA-/var/lib/pgsql/data}
 export PGPORT=${PGPORT-5444}
 
-if ! /usr/bin/psql --help >/dev/null 2>&1 ; then
-	echo "No /usr/bin/psql command installed/found!" >&2
+# Establish PGDG paths
+
+if [ -x /usr/psql-12/bin/pg_ctl ]; then
+  export PATH=$PATH:/usr/psql-12/bin
+elif [ -x /usr/psql-9.5/bin/pg_ctl ]; then
+  export PATH=$PATH:/usr/psql-9.5/bin
+fi
+
+if ! psql --help >/dev/null 2>&1 ; then
+	echo "No psql command installed/found!" >&2
 	exit 2
 fi
 
