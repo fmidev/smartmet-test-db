@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 20.12.02
+Version: 20.12.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -15,8 +15,8 @@ BuildArch: noarch
 BuildRequires: postgresql12-contrib
 BuildRequires: postgresql12-server
 %else
-BuildRequires: postgresql-contrib < 9.5
-BuildRequires: postgresql-server < 9.5
+BuildRequires: postgresql95-contrib
+BuildRequires: postgresql95-server
 %endif
 BuildRequires: bzip2
 BuildRequires: make
@@ -27,8 +27,8 @@ BuildRequires: rpm-build
 #TestRequires: postgresql12-server
 #TestRequires: postgis30_12
 %else
-#TestRequires: postgresql-server < 9.5
-#TestRequires: postgresql-contrib < 9.5
+#TestRequires: postgresql95-server
+#TestRequires: postgresql95-contrib
 #TestRequires: postgis < 3
 %endif
 #TestRequires: bzip2
@@ -38,8 +38,8 @@ Requires: postgresql12-contrib
 Requires: postgresql12-server
 Requires: postgis30_12
 %else
-Requires: postgresql-contrib < 9.5
-Requires: postgresql-server < 9.5
+Requires: postgresql95-contrib
+Requires: postgresql95-server
 Requires: postgis < 3
 %endif
 Requires: bzip2
@@ -68,6 +68,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Thu Dec 10 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.10-1.fmi
+- Updated dependencies
+
 * Wed Dec 02 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.12.02-1.fmi
 - No more generate prebuilt database as a separate RPM package
 
