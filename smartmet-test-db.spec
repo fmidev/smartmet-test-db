@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 20.12.02
+Version: 20.12.9
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -11,20 +11,32 @@ URL: https://github.com/fmidev/smartmet-test-db
 Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
+%if 0%{rhel} >= 8
+BuildRequires: postgresql12-contrib
+BuildRequires: postgresql12-server
+#TestRequires: postgresql12-contrib
+#TestRequires: postgresql12-server
+#TestRequires: postgis30_12
+Requires: postgresql12-contrib
+Requires: postgresql12-server
+Requires: postgis30_12
+%else
 BuildRequires: postgresql-contrib < 9.5
 BuildRequires: postgresql-server < 9.5
+#TestRequires: postgresql-server < 9.5
+#TestRequires: postgresql-contrib < 9.5
+#TestRequires: postgis < 3
+Requires: postgresql-contrib < 9.5
+Requires: postgresql-server < 9.5
+Requires: postgis < 3
+%endif
+
 BuildRequires: bzip2
 BuildRequires: make
 BuildRequires: rpm-build
 #TestRequires: make
-#TestRequires: postgresql-server < 9.5
-#TestRequires: postgresql-contrib < 9.5
-#TestRequires: postgis < 3
 #TestRequires: bzip2
 Provides: %{LIBNAME}
-Requires: postgresql-contrib < 9.5
-Requires: postgresql-server < 9.5
-Requires: postgis < 3
 Requires: bzip2
 
 %description
@@ -51,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Wed Dec  9 2020 Mika Heiskanen <mheiskan@rhel8.dev.fmi.fi> - 20.12.9-1.fmi
+- Improved RHEL and PGDG version support
+
 * Wed Dec 02 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.12.02-1.fmi
 - No more generate prebuilt database as a separate RPM package
 
