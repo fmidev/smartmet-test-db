@@ -52,6 +52,11 @@ esac
 
 psql -f /usr/share/smartmet/test/db/globals.sql
 
+echo Creating postgis extensions
+psql -c "CREATE EXTENSION postgis;"
+psql -c "CREATE EXTENSION postgis_raster;"
+psql -c "CREATE EXTENSION postgis topology;"
+
 # Create databases. We need to be able to create manifest files from the dumps, hence we use /tmp
 mkdir -p /tmp/smartmet-test-db
 cd /tmp/smartmet-test-db
@@ -62,10 +67,6 @@ for dump in *.dump; do
   db=$(basename $dump .dump)
   echo Creating $db
   createdb $db
-  echo Creating postgis extension
-  psql -c "CREATE EXTENSION postgis;"
-  psql -c "CREATE EXTENSION postgis_raster;"
-  psql -c "CREATE EXTENSION postgis topology;"
   echo Importing $dump
   for pgfile in $postgisfiles; do
       psql -f "$pgfile" $db 2>/dev/null || ok=false
