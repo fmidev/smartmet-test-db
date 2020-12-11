@@ -68,7 +68,7 @@ for dump in *.dump; do
   for pgfile in $postgisfiles; do
       psql -f "$pgfile" $db || ok=false
   done
-  perl postgis_restore.pl "$dump" | psql $db 2>/dev/null || ok=false
+  perl postgis_restore.pl "$dump" | psql -d $db 2>/dev/null || ok=false
 done
 
 # Exit value:
