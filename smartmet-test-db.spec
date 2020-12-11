@@ -21,14 +21,14 @@ Requires: postgresql12-contrib
 Requires: postgresql12-server
 Requires: postgis31_12
 %else
-BuildRequires: postgresql-contrib < 9.5
-BuildRequires: postgresql-server < 9.5
-#TestRequires: postgresql-server < 9.5
-#TestRequires: postgresql-contrib < 9.5
-#TestRequires: postgis < 3
-Requires: postgresql-contrib < 9.5
-Requires: postgresql-server < 9.5
-Requires: postgis < 3
+BuildRequires: postgresql95-contrib
+BuildRequires: postgresql95-server
+#TestRequires: postgresql95-server
+#TestRequires: postgresql95-contrib
+#TestRequires: postgis24_95
+Requires: postgresql95-contrib
+Requires: postgresql95-server
+Requires: postgis24_95
 %endif
 
 BuildRequires: bzip2
