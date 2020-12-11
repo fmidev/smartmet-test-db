@@ -2,9 +2,7 @@
 
 export PGHOST=${PGHOST-localhost}
 export PGPORT=${PGPORT-5444}
-export PGDATA=${PGDATA-/var/lib/pgsql/data}
-PGUSER=postgres
-export PGUSER
+export PGUSER=postgres
 
 # Establish PGDG paths and the postgis files to be executed when initializing the db
 
@@ -39,78 +37,36 @@ for pgfile in ${postgisfiles[*]} ; do
 	fi
 done
 
-sqlfiles=(db-create.sql role-create.sql db-rest.sql.bz2 postgisdbs.lst drop-all.sql)
-paths=(`dirname $0` `dirname $0`/../db)
-if [ -r "`dirname $0`/${sqlfiles[0]}" ] ; then
-	fp="`dirname $0`"
-fi 
-if [ -r "`dirname $0`/../${sqlfiles[0]}" ] ; then
-	d="`dirname $0`/.."
-	fp="`cd $d ; pwd`"
-fi 
-if [ ! "$fp" ] ; then
-	echo "Unable to find path for data files!" >&2
-	exit 4
-fi
+# Check command line arguments: stop, drop, droponly
 
-for sqlf in ${sqlfiles[*]} ; do
-	if [ ! -r "$fp/$sqlf" ] ; then
-		echo "$fp/$sqlf is unreadable"
-		exit 5
-	fi
-done
-
-# Check CLI paramaters
 case $1 in
-	drop*)
-		psql --set ON_ERROR_STOP=on -f "$fp/${sqlfiles[4]}"
-		if [ "$?" != "0" ] ; then
-			echo "Drop script $fp/${sqlfiles[4]} failed to work - should work always."
-			exit 5
-		fi
-		# Only drop, don't continue
-		if [ "$1" = "droponly" ] ; then
-			exit 0
-		fi
-		;;
+    drop*)
+	echo Not dropping anything - test stub
+	if [ "$1" =0 "dropoonly" ]; then
+	    exit 0;
+	fi
+	;;
+    stop)
+	echo Not stopping anything - test stub
+	exit 0
+	;;
 esac
 
-# Create database, ignore erros
+# Normal execution imports data into the database
 
-psql -f "$fp/${sqlfiles[0]}"
+psql -f globals.sql
 
-# Create roles, ignore errors
-
-psql -f "$fp/${sqlfiles[1]}"
-
-# Take postgis into use, ignore errors
-
-tmpf="`mktemp`"
-for pgdb in `cat "$fp/${sqlfiles[3]}"` ; do
-	for pgfile in ${postgisfiles[*]} ; do
-		psql -f "$pgfile" $pgdb && echo "$pgdb: $pgfile" >> $tmpf
-	done
+# Create databases
+ok=true
+for dump in *.dump; do
+  db=$(basename $dump .dump)
+  echo Importing $dump
+  perl postgis_restore.pl "$dump" | psql $db || ok=false
+  for pgfile in $postgisfiles; do
+      psql -f "$pgfile" $db || ok=false
+  done
 done
-if [ `wc -l < $tmpf` -lt ${#postgisfiles[@]} ] ; then
-	echo "Failed to add Postgis extensions to any database!"
-	rm -f "$tmpf"
-	exit 10
-fi
-echo "Postgis added:"
-cat "$tmpf"
-rm -f "$tmpf"
 
-# Create rest of the database, do not ignore errors
+# Exit value:
+$ok
 
-tmpf="`mktemp`db.sql"
-bzcat < "$fp/${sqlfiles[2]}" > "$tmpf"
-psql --set ON_ERROR_STOP=on -f "$tmpf"
-r=$?
-rm -f "$tmpf"
-if [ "$r" != "0" ] ; then
-	echo "Failed to populate database, please consider dropping everything and retrying" >&2
-	exit 6
-fi
-
-# Done
-exit 0

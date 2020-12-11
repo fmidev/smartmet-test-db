@@ -15,6 +15,9 @@ objdir = obj
 INSTALL_PROG = install -p -m 775
 INSTALL_DATA = install -p -m 664
 
+# Databases in the test postgresql
+DATABASES=authentication avi fminames gis icemap2storage_ro iot_obs
+
 #.PHONY: test rpm
 
 # The rules
@@ -25,29 +28,25 @@ release: all
 profile: all
 
 clean:
-	rm -f *~ $(SUBNAME)/*~ db-rest.sql.bz2 db-create.sql role-create.sql drop-all.sql postgisdbs.lst db-dump db-rest.sql
-
-install:
-	mkdir -p $(mydatadir)/test/db
-	cp -v db-create.sql role-create.sql drop-all.sql postgisdbs.lst *.sql.bz2 *.sh $(mydatadir)/test/db
-
-db-dump: db-dump.bz2
-	bzcat db-dump.bz2 > db-dump
-
-db-rest.sql.bz2: db-rest.sql
-	bzip2 -c9 < db-rest.sql > db-rest.sql.bz2
-
-db-rest.sql db-create.sql role-create.sql drop-all.sql postgisdbs.lst: db-dump database-script-creator.pl Makefile
-	./database-script-creator.pl db-create.sql role-create.sql tmp3 postgisdbs.lst < db-dump > tmp2
-	sort < tmp3 > drop-all.sql
-	rm -f tmp3
-	mv tmp2 db-rest.sql
+	rm -f *~
 
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz dist/* # Clean a possible leftover from previous attempt
 	tar -czvf $(SPEC).tar.gz --transform "s,^,$(SPEC)/," *
 	rpmbuild -tb $(SPEC).tar.gz
 	rm -f $(SPEC).tar.gz
+
+install:
+	mkdir -p $(mydatadir)/test/db
+	cp -v *.pl *.sh $(mydatadir)/test/db
+
+dumps:
+	@echo Dumping globals to globals.sql
+	@pg_dumpall -g -h smartmet-test -p 5444 -U postgres -f globals.sql
+	@for db in $(DATABASES); do \
+	  echo Dumping $$db to $$db.dump; \
+	  pg_dump -h smartmet-test -p 5444 -U postgres -Fc -b -v -f $$db.dump $$db > /dev/null 2>&1; \
+	done
 
 # Test:
 # - warn about data being destroyed
@@ -79,5 +78,5 @@ test:
 testinstall:
 	@echo "Testing installation file count"
 	ls -l /usr/share/smartmet/test/db/
-	test `ls /usr/share/smartmet/test/db/*.sql* | wc -l` = "4"
-	test `ls /usr/share/smartmet/test/db/*.sh | wc -l` = "4"
+	test `ls /usr/share/smartmet/test/db/*.sh | wc -l` = "3"
+	test `ls /usr/share/smartmet/test/db/*.pl | wc -l` = "1"
