@@ -52,11 +52,13 @@ esac
 
 psql -f /usr/share/smartmet/test/db/globals.sql
 
-# Create databases
-cd /tmp
+# Create databases. We need to be able to create manifest files from the dumps, hence we use /tmp
+mkdir -p /tmp/smartmet-test-db
+cd /tmp/smartmet-test-db
+cp -v /usr/share/smartmet/test/db/* .
 
 ok=true
-for dump in /usr/share/smartmet/test/db/*.dump; do
+for dump in *.dump; do
   db=$(basename $dump .dump)
   echo Creating $db
   createdb $db
@@ -66,7 +68,7 @@ for dump in /usr/share/smartmet/test/db/*.dump; do
   for pgfile in $postgisfiles; do
       psql -f "$pgfile" $db || ok=false
   done
-  perl /usr/share/smartmet/test/db/postgis_restore.pl "$dump" | psql $db 2>/dev/null || ok=false
+  perl postgis_restore.pl "$dump" | psql $db 2>/dev/null || ok=false
 done
 
 # Exit value:
