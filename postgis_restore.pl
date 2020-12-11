@@ -94,7 +94,7 @@ while(my $l = <DATA>) {
 
 print STDERR "  Writing manifest of things to read from dump file...\n";
 
-open( DUMP, "pg_restore -l $dumpfile |" ) || die "$me:\tCannot open dump file '$dumpfile'\n";
+open( DUMP, "pg_restore --dbname=postgres -l $dumpfile |" ) || die "$me:\tCannot open dump file '$dumpfile'\n";
 open( MANIFEST, ">$manifest" ) || die "$me:\tCannot open manifest file '$manifest'\n";
 while( my $l = <DUMP> ) {
 
@@ -118,7 +118,7 @@ close(DUMP) || die "$me: pg_restore returned an error\n";
 # unwanted bits.
 #
 print STDERR "  Writing ASCII to stdout...\n";
-open( INPUT, "pg_restore -L $manifest $dumpfile |") || die "$me:\tCan't run pg_restore\n";
+open( INPUT, "pg_restore --dbname=postgres -L $manifest $dumpfile |") || die "$me:\tCan't run pg_restore\n";
 
 #
 # Disable topology metadata tables triggers to allow for population
