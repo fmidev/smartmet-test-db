@@ -65,10 +65,10 @@ test:
 		echo "Running make test outside of CI will destroy local(or PGHOST) database contents!" ; \
 		echo "If you are sure, set environment CI=true" ; false )
 	test ! -d /usr/share/smartmet/test/db || make testinstall
-	cd /usr/share/smartmet/test/db # postgres user not allowed in /home/rpmbuild/project
-	PGPORT=12543 $(pginit) # Test init
-	ps ax | grep -q 'postgres -D [/]*' # Check postgres is running
-	PGPORT=12543 $(pginit) stop # Test reinit and stop after that
+	PGPORT=12543 $(pginit)                                     # Test init
+	ps ax | grep -q 'postgres -D [/]*'                         # Check postgres is running
+	PGPORT=12543 $(dbinst)                                     # Test adding data
+	PGPORT=12543 $(pginit) stop                                # Test reinit and stop after that
 	if ( ps ax | grep -q 'postgres -D [/]*' ) ; then true ; fi # Check postgres is not running
 	@echo All tests passed.
 
