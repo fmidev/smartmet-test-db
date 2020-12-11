@@ -66,7 +66,7 @@ for dump in /usr/share/smartmet/test/db/*.dump; do
   for pgfile in $postgisfiles; do
       psql -f "$pgfile" $db || ok=false
   done
-  perl postgis_restore.pl "$dump" | psql $db 2>/dev/null || ok=false
+  perl /usr/share/smartmet/test/db/postgis_restore.pl "$dump" | psql $db 2>/dev/null || ok=false
 done
 
 # Exit value:
