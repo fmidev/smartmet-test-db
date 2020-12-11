@@ -10,7 +10,7 @@ export PGUSER
 
 if [ -x /usr/pgsql-12/bin/pg_ctl ]; then
   export PATH=$PATH:/usr/pgsql-12/bin
-  pgpath=/usr/pgsql-12/share/contrib/postgis-3.0/
+  pgpath=/usr/pgsql-12/share/contrib/postgis-3.1/
   postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
 elif [ -x /usr/pgsql-9.5/bin/pg_ctl ]; then
   export PATH=$PATH:/usr/pgsql-9.5/bin
