@@ -38,7 +38,7 @@ rpm: clean $(SPEC).spec
 
 install:
 	mkdir -p $(mydatadir)/test/db
-	cp -v *.pl *.sh $(mydatadir)/test/db
+	cp -v *.pl *.sh *dump *sql $(mydatadir)/test/db
 
 dumps:
 	@echo Dumping globals to globals.sql
@@ -78,5 +78,7 @@ test:
 testinstall:
 	@echo "Testing installation file count"
 	ls -l /usr/share/smartmet/test/db/
+	test `ls /usr/share/smartmet/test/db/*.sql | wc -l` = "1"
+	test `ls /usr/share/smartmet/test/db/*.dump | wc -l` = "6"
 	test `ls /usr/share/smartmet/test/db/*.sh | wc -l` = "3"
 	test `ls /usr/share/smartmet/test/db/*.pl | wc -l` = "1"
