@@ -68,10 +68,6 @@ test:
 	PGPORT=12543 $(pginit) # Test init
 	ps ax | grep -q 'postgres -D [/]*' # Check postgres is running
 	PGPORT=12543 $(pginit) stop # Test reinit and stop after that
-	PGPORT=12543 $(pginit) # Should actually just start
-	PGPORT=12543 $(dbinst) drop # Install, possibly dropping previous
-	PGPORT=12543 $(dbinst) droponly # Remove test data
-	PGPORT=12543 $(pginit) stop # Stop db
 	if ( ps ax | grep -q 'postgres -D [/]*' ) ; then true ; fi # Check postgres is not running
 	@echo All tests passed.
 

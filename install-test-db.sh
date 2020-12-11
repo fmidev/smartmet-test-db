@@ -3,6 +3,7 @@
 export PGHOST=${PGHOST-localhost}
 export PGPORT=${PGPORT-5444}
 export PGUSER=postgres
+export PGDATA=${PGDATA-/var/lib/pgsql/data}
 
 # Establish PGDG paths and the postgis files to be executed when initializing the db
 
@@ -40,14 +41,9 @@ done
 # Check command line arguments: stop, drop, droponly
 
 case $1 in
-    drop*)
-	echo Not dropping anything - test stub
-	if [ "$1" =0 "dropoonly" ]; then
-	    exit 0;
-	fi
-	;;
     stop)
-	echo Not stopping anything - test stub
+	echo Stopping the database
+	pg_ctl -D "$PGDATA" -p $PGPORT stop
 	exit 0
 	;;
 esac
