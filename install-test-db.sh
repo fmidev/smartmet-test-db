@@ -64,6 +64,8 @@ for dump in *.dump; do
   createdb $db
   echo Creating postgis extension
   psql -c "CREATE EXTENSION postgis;"
+  psql -c "CREATE EXTENSION postgis_raster;"
+  psql -c "CREATE EXTENSION postgis topology;"
   echo Importing $dump
   for pgfile in $postgisfiles; do
       psql -f "$pgfile" $db 2>/dev/null || ok=false
