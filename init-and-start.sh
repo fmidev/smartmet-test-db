@@ -43,7 +43,7 @@ if [ "$PGHOST" = "localhost" ] ; then
 	fi
 
 	# Start database cluster if it is not running
-	if ! sudo -u postgres pg_ctl status -D "$PGDATA" -o "-p $PGPORT" >/dev/null ; then
+	if ! sudo -u postgres env "PATH=$PATH" pg_ctl status -D "$PGDATA" -o "-p $PGPORT" >/dev/null ; then
 		if ! sudo -u postgres env "PATH=$PATH" pg_ctl -w -s -D "$PGDATA" -o "-F -p $PGPORT" start ; then
 			echo "$0: Unable to start Postgresql server"
 			exit 4
