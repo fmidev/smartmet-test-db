@@ -8,6 +8,14 @@ else
     export PGDATA=$1
 fi
 
+# Establish PGDG paths
+
+if [ -x /usr/pgsql-12/bin/pg_ctl ]; then
+  export PATH=$PATH:/usr/pgsql-12/bin
+elif [ -x /usr/pgsql-9.5/bin/pg_ctl ]; then
+  export PATH=$PATH:/usr/pgsql-9.5/bin
+fi
+
 export PGPORT=15444
 prefix=$(dirname $0)
 
