@@ -58,11 +58,13 @@ for dump in /usr/share/smartmet/test/db/*.dump; do
   db=$(basename $dump .dump)
   echo Creating $db
   createdb $db
+  echo Creating postgis extension
+  psql -c "CREATE EXTENSION postgis;"
   echo Importing $dump
   for pgfile in $postgisfiles; do
       psql -f "$pgfile" $db || ok=false
   done
-  perl postgis_restore.pl "$dump" | psql $db || ok=false
+  perl postgis_restore.pl "$dump" | psql $db > /dev/null || ok=false
 done
 
 # Exit value:
