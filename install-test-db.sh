@@ -56,11 +56,13 @@ psql -f /usr/share/smartmet/test/db/globals.sql
 ok=true
 for dump in /usr/share/smartmet/test/db/*.dump; do
   db=$(basename $dump .dump)
+  echo Creating $db
+  createdb $db
   echo Importing $dump
-  perl postgis_restore.pl "$dump" | psql $db || ok=false
   for pgfile in $postgisfiles; do
       psql -f "$pgfile" $db || ok=false
   done
+  perl postgis_restore.pl "$dump" | psql $db || ok=false
 done
 
 # Exit value:
