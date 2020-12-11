@@ -50,11 +50,11 @@ esac
 
 # Normal execution imports data into the database
 
-psql -f globals.sql
+psql -f /usr/share/smartmet/test/db/globals.sql
 
 # Create databases
 ok=true
-for dump in *.dump; do
+for dump in /usr/share/smartmet/test/db/*.dump; do
   db=$(basename $dump .dump)
   echo Importing $dump
   perl postgis_restore.pl "$dump" | psql $db || ok=false
