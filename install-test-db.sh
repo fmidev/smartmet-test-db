@@ -53,6 +53,8 @@ esac
 psql -f /usr/share/smartmet/test/db/globals.sql
 
 # Create databases
+cd /tmp
+
 ok=true
 for dump in /usr/share/smartmet/test/db/*.dump; do
   db=$(basename $dump .dump)
@@ -64,7 +66,7 @@ for dump in /usr/share/smartmet/test/db/*.dump; do
   for pgfile in $postgisfiles; do
       psql -f "$pgfile" $db || ok=false
   done
-  perl postgis_restore.pl "$dump" | psql $db > /dev/null || ok=false
+  perl postgis_restore.pl "$dump" | psql $db 2>/dev/null || ok=false
 done
 
 # Exit value:
