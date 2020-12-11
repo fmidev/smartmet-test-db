@@ -3,8 +3,8 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 20.12.10
-Release: 2%{?dist}.fmi
+Version: 20.12.11
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-test-db
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Fri Dec 11 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.11-1.fmi
+- Fixed PGDG paths when installing a local database
+
 * Thu Dec 10 2020 Mika Heiskanen <mheiskan@rhel8.dev.fmi.fi> - 20.12.10-2.fmi
 - Updated RHEL8 dependency to postgis31_12
 
