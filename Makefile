@@ -80,5 +80,5 @@ testinstall:
 	ls -l /usr/share/smartmet/test/db/
 	test `ls /usr/share/smartmet/test/db/*.sql | wc -l` = "1"
 	test `ls /usr/share/smartmet/test/db/*.dump | wc -l` = "6"
-	test `ls /usr/share/smartmet/test/db/*.sh | wc -l` = "3"
+	test `ls /usr/share/smartmet/test/db/*.sh | wc -l` = "4"
 	test `ls /usr/share/smartmet/test/db/*.pl | wc -l` = "1"
