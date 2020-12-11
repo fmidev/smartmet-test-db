@@ -66,7 +66,7 @@ for dump in *.dump; do
   psql -c "CREATE EXTENSION postgis;"
   echo Importing $dump
   for pgfile in $postgisfiles; do
-      psql -f "$pgfile" $db || ok=false
+      psql -f "$pgfile" $db 2>/dev/null || ok=false
   done
   perl postgis_restore.pl "$dump" | psql -d $db 2>/dev/null || ok=false
 done
