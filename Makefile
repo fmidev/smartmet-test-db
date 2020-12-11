@@ -21,11 +21,11 @@ DATABASES=authentication avi fminames gis icemap2storage_ro iot_obs
 #.PHONY: test rpm
 
 # The rules
-all: db-rest.sql.bz2
+all: 
 
 debug: all
+
 release: all
-profile: all
 
 clean:
 	rm -f *~
