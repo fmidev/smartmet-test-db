@@ -4,7 +4,7 @@
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
 Version: 20.12.11
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-test-db
@@ -25,10 +25,10 @@ BuildRequires: postgresql95-contrib
 BuildRequires: postgresql95-server
 #TestRequires: postgresql95-server
 #TestRequires: postgresql95-contrib
-#TestRequires: postgis24_95
+#TestRequires: postgis30_95
 Requires: postgresql95-contrib
 Requires: postgresql95-server
-Requires: postgis24_95
+Requires: postgis30_95
 %endif
 
 BuildRequires: bzip2
@@ -63,6 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Fri Dec 11 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.11-2.fmi
+- Upgrade to postgis30_95 on RHEL7
+
 * Fri Dec 11 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.11-1.fmi
 - Fixed PGDG paths when installing a local database
 
