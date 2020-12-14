@@ -13,7 +13,7 @@ if [ -x /usr/pgsql-12/bin/pg_ctl ]; then
   postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
 elif [ -x /usr/pgsql-9.5/bin/pg_ctl ]; then
   export PATH=$PATH:/usr/pgsql-9.5/bin
-  pgpath=/usr/pgsql-9.5/share/contrib/postgis-2.4/
+  pgpath=/usr/pgsql-9.5/share/contrib/postgis-3.0/
   postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
 else
   postgisfiles=(/usr/share/pgsql/contrib/postgis-64.sql /usr/share/pgsql/contrib/postgis-2.0/topology.sql /usr/share/pgsql/contrib/postgis-2.0/rtpostgis.sql)
