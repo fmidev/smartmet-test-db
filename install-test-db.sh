@@ -11,12 +11,15 @@ if [ -x /usr/pgsql-12/bin/pg_ctl ]; then
   export PATH=$PATH:/usr/pgsql-12/bin
   pgpath=/usr/pgsql-12/share/contrib/postgis-3.1/
   postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
+  postgisrestore=/usr/pgsql-12/share/contrib/postgis-3.0/postgis_restore.pl
 elif [ -x /usr/pgsql-9.5/bin/pg_ctl ]; then
   export PATH=$PATH:/usr/pgsql-9.5/bin
   pgpath=/usr/pgsql-9.5/share/contrib/postgis-3.0/
   postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
+  postgisrestore=/usr/pgsql-9.5/share/contrib/postgis-3.0/postgis_restore.pl
 else
   postgisfiles=(/usr/share/pgsql/contrib/postgis-64.sql /usr/share/pgsql/contrib/postgis-2.0/topology.sql /usr/share/pgsql/contrib/postgis-2.0/rtpostgis.sql)
+  postgisrestore=/usr/share/postgis/postgis_restore.pl
 fi
 
 # Verify required commands and scripts exist
@@ -71,7 +74,7 @@ for dump in *.dump; do
   for pgfile in $postgisfiles; do
       psql -f "$pgfile" $db 2>/dev/null || ok=false
   done
-  perl postgis_restore.pl "$dump" | psql $db 2>/dev/null || ok=false
+  perl $postgisrestore "$dump" | psql $db 2>/dev/null || ok=false
 done
 
 # Exit value:
