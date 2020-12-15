@@ -11,28 +11,21 @@ URL: https://github.com/fmidev/smartmet-test-db
 Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
-
-%if 0%{rhel} >= 8
-Requires: postgis31_12
-%else
-Requires: postgis30_95
-%endif
-
-BuildRequires: postgresql12-contrib
-BuildRequires: postgresql12-server
-#TestRequires: postgresql12-contrib
-#TestRequires: postgresql12-server
-#TestRequires: postgis31_12
-Requires: postgresql12-contrib
-Requires: postgresql12-server
-
 BuildRequires: bzip2
 BuildRequires: make
+BuildRequires: postgresql12-contrib
+BuildRequires: postgresql12-server
 BuildRequires: rpm-build
-#TestRequires: make
-#TestRequires: bzip2
-Provides: %{LIBNAME}
 Requires: bzip2
+Requires: postgis31_12
+Requires: postgresql12-contrib
+Requires: postgresql12-server
+#TestRequires: bzip2
+#TestRequires: make
+#TestRequires: postgis31_12
+#TestRequires: postgresql12-contrib
+#TestRequires: postgresql12-server
+Provides: %{LIBNAME}
 
 %description
 FMI postgresql database contents and test data installation script.
