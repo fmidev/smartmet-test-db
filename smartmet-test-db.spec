@@ -4,14 +4,20 @@
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
 Version: 20.12.15
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-test-db
 Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
+
 %if 0%{rhel} >= 8
+Requires: postgis31_12
+%else
+Requires: postgis30_95
+%endif
+
 BuildRequires: postgresql12-contrib
 BuildRequires: postgresql12-server
 #TestRequires: postgresql12-contrib
@@ -19,17 +25,6 @@ BuildRequires: postgresql12-server
 #TestRequires: postgis31_12
 Requires: postgresql12-contrib
 Requires: postgresql12-server
-Requires: postgis31_12
-%else
-BuildRequires: postgresql95-contrib
-BuildRequires: postgresql95-server
-#TestRequires: postgresql95-server
-#TestRequires: postgresql95-contrib
-#TestRequires: postgis30_95
-Requires: postgresql95-contrib
-Requires: postgresql95-server
-Requires: postgis30_95
-%endif
 
 BuildRequires: bzip2
 BuildRequires: make
@@ -63,6 +58,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Tue Dec 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.15-2.fmi
+- Upgrade to pgdg12
+
 * Tue Dec 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.15-1.fmi
 - Improved postgis_restore script to avoid duplicate functions in the public schema
 
