@@ -25,9 +25,9 @@ PSQL="psql -p $PGPORT -h 127.0.0.1 -U postgres"
 PSQL_NOERR="$PSQL --set ON_ERROR_STOP=on"
 
 postgisfiles=(\
-            /usr/share/pgsql/contrib/postgis-64.sql \
-            /usr/share/pgsql/contrib/postgis-2.0/topology.sql \
-            /usr/share/pgsql/contrib/postgis-2.0/rtpostgis.sql)
+            /usr/share/pgsql/contrib/postgis-3.1/postgis.sql \
+            /usr/share/pgsql/contrib/postgis-3.1/topology.sql \
+            /usr/share/pgsql/contrib/postgis-3.1/rtpostgis.sql)
 
 sqlfiles=(db-create.sql role-create.sql db-rest.sql.bz2 postgisdbs.lst drop-all.sql)
 
@@ -39,7 +39,7 @@ postgisfiles_missing=
 for pgfile in ${postgisfiles[*]}; do test -f $pgfile || postgisfiles_missing="$postgisfiles_missing $pgfile"; done
 if ! [ -z "$postgisfiles_missing" ] ; then
     echo "Files missing:\n   $postgisfiles_missing\n"
-    echo "Is postgis-2.0 installed"
+    echo "Is postgis-3.1 installed"
     exit 1
 fi
 
