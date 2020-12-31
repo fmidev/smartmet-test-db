@@ -58,7 +58,7 @@ psql -f /usr/share/smartmet/test/db/globals.sql
 echo Creating postgis extensions
 psql -c "CREATE EXTENSION postgis;"
 psql -c "CREATE EXTENSION postgis_raster;"
-psql -c "CREATE EXTENSION postgis topology;"
+psql -c "CREATE EXTENSION postgis_topology;"
 
 # Create databases. We need to be able to create manifest files from the dumps, hence we use /tmp
 mkdir -p /tmp/smartmet-test-db
