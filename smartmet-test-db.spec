@@ -4,7 +4,7 @@
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
 Version: 20.12.31
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-test-db
@@ -36,7 +36,7 @@ Use installed script to instead.
 rm -rf $RPM_BUILD_ROOT
 
 %setup -q -n %{SPECNAME}
- 
+
 %build
 make %{_smp_mflags}
 
@@ -51,6 +51,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Thu Dec 31 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.12.31-2.fmi
+- Ensure use of currect database version in create-local-db.sh and test-db-ctl.sh
+
 * Thu Dec 31 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.12.31-1.fmi
 - Fix create-local-db.sh script after adding support for sevaral PosgGis versions
 
