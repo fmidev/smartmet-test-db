@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 20.12.29
+Version: 20.12.31
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -51,6 +51,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Thu Dec 31 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.12.31-1.fmi
+- Fix create-local-db.sh script after adding support for sevaral PosgGis versions
+
 * Tue Dec 29 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.29-1.fmi
 - Upgrade to postgis 3.1
 
