@@ -96,7 +96,7 @@ if ! $PSQL -c 'SELECT 1;' >/dev/null 2>&1 ; then
     exit 1
 fi
 
- Normal execution imports data into the database
+# Normal execution imports data into the database
 $PSQL -f /usr/share/smartmet/test/db/globals.sql
 
 echo Creating postgis extensions
