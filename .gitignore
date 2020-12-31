@@ -20,3 +20,4 @@ dist/
 
 /pgdata
 /tmp
+/tmp-db

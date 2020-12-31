@@ -24,22 +24,26 @@ POSTGRES_PARAM="-k /tmp -p $PGPORT -F"
 PSQL="psql -p $PGPORT -h 127.0.0.1 -U postgres"
 PSQL_NOERR="$PSQL --set ON_ERROR_STOP=on"
 
-postgisfiles=(\
-            /usr/pgsql-12/share/contrib/postgis-3.1/postgis.sql \
-            /usr/pgsql-12/share/contrib/postgis-3.1/topology.sql \
-            /usr/pgsql-12/share/contrib/postgis-3.1/rtpostgis.sql)
-
-sqlfiles=(db-create.sql role-create.sql db-rest.sql.bz2 postgisdbs.lst drop-all.sql)
-
-stop_database() {
-    pg_ctl --pgdata=$PGDATA -o "-k /tmp -p $PGPORT" stop
-}
+if [ -x /usr/pgsql-12/bin/pg_ctl ]; then
+  export PATH=$PATH:/usr/pgsql-12/bin
+  pgpath=/usr/pgsql-12/share/contrib/postgis-3.1/
+  postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
+  postgisrestore=$pgpath/postgis_restore.pl
+elif [ -x /usr/pgsql-9.5/bin/pg_ctl ]; then
+  export PATH=$PATH:/usr/pgsql-9.5/bin
+  pgpath=/usr/pgsql-9.5/share/contrib/postgis-3.0/
+  postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
+  postgisrestore=$pgpath/postgis_restore.pl
+else
+  postgisfiles=(/usr/share/pgsql/contrib/postgis-64.sql /usr/share/pgsql/contrib/postgis-2.0/topology.sql /usr/share/pgsql/contrib/postgis-2.0/rtpostgis.sql)
+  postgisrestore=/usr/share/postgis/postgis_restore.pl
+fi
 
 postgisfiles_missing=
 for pgfile in ${postgisfiles[*]}; do test -f $pgfile || postgisfiles_missing="$postgisfiles_missing $pgfile"; done
 if ! [ -z "$postgisfiles_missing" ] ; then
     echo "Files missing:\n   $postgisfiles_missing\n"
-    echo "Is postgis-3.1 installed"
+    echo "Is postgis installed"
     exit 1
 fi
 
@@ -61,18 +65,15 @@ if [ -f $PGDATA/postmaster.pid ] ; then
     fi
 fi
 
-sqlfiles_missing=
-for sqlfile in ${sqlfiles[*]}; do test -f $prefix/$sqlfile || sqlfiles_missing="$sqlfiles_missing $sqlfile"; done
-if ! [ -z "$sqlfiles_missing" ] ; then
-    echo "Data files not found:\n $sqlfiles_missing\n"
-    exit 1
-fi
-
 rm -rf tmp-db
 if ! $INITDB ; then
     echo "Failed to create PostgreSQL database cluster"
     exit 1
 fi
+
+stop_database() {
+    pg_ctl --pgdata=$PGDATA -o "-k /tmp -p $PGPORT" stop
+}
 
 cleanup() {
     echo "Stopping Postgresql server..."
@@ -91,36 +92,39 @@ fi
 sleep 3
 
 if ! $PSQL -c 'SELECT 1;' >/dev/null 2>&1 ; then
-    echo "Unable top connect to PostgreSQL server"
+    echo "Unable to connect to PostgreSQL server"
     exit 1
 fi
 
-# Create database, ignore erros
-$PSQL -f ${prefix}/${sqlfiles[0]}
+ Normal execution imports data into the database
+$PSQL -f /usr/share/smartmet/test/db/globals.sql
 
-# Create roles, ignore errors
-$PSQL -f ${prefix}/${sqlfiles[1]}
+echo Creating postgis extensions
+$PSQL -c "CREATE EXTENSION postgis;"
+$PSQL -c "CREATE EXTENSION postgis_raster;"
+$PSQL -c "CREATE EXTENSION postgis_topology;"
 
-# Take postgis into use, ignore errors
-tmpf="`mktemp`"
-for pgdb in $(cat ${prefix}/${sqlfiles[3]}) ; do
-	for pgfile in ${postgisfiles[*]} ; do
-	        case "$pgfile" in *.bzip2) bzip2 -cd $pgfile ;; *) cat $pgfile ;; esac |\
-		$PSQL $pgdb && echo "$pgdb: $pgfile" >> $tmpf
-	done
+# Create databases. We need to be able to create manifest files from the dumps, hence we use /tmp
+mkdir -p /tmp/smartmet-test-db
+cd /tmp/smartmet-test-db
+cp -v /usr/share/smartmet/test/db/* .
+
+ok=true
+for dump in *.dump; do
+  db=$(basename $dump .dump)
+  echo Creating $db
+  $PSQL -c "CREATE DATABASE $db;"
+  echo Importing $dump
+  for pgfile in $postgisfiles; do
+      $PSQL -f "$pgfile" $db 2>/dev/null || ok=false
+  done
+  perl ./postgis_restore.pl "$dump" | $PSQL $db 2>/dev/null || ok=false
 done
-if [ $(wc -l < $tmpf) -lt ${#postgisfiles[@]} ] ; then
-	echo "Failed to add Postgis extensions to any database!"
-	rm -f "$tmpf"
-	exit 10
-fi
-echo "Postgis added:"
-cat "$tmpf"
-rm -f "$tmpf"
 
-# Create rest of the database, do not ignore errors
-tmpf="`mktemp`db.sql"
-if ! bzip2 -cd ${prefix}/${sqlfiles[2]} | $PSQL --set ON_ERROR_STOP=on ; then
-    echo "Failed to populate database, please consider dropping everything and retrying" >&2
-    exit 6
+# Exit value:
+if ! $ok ; then
+    echo "Failed to populate database, please consider dropping everything and retrying" 1>&2
+    echo "See earlier messages for more information" 1>&2
 fi
+
+$ok

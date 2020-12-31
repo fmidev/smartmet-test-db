@@ -29,6 +29,7 @@ release: all
 
 clean:
 	rm -f *~
+	rm -rf tmp-db
 
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz dist/* # Clean a possible leftover from previous attempt
