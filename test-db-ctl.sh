@@ -9,9 +9,9 @@ else
 fi
 
 if [ -x /usr/pgsql-12/bin/pg_ctl ]; then
-  export PATH=$PATH:/usr/pgsql-12/bin
+  export PATH=/usr/pgsql-12/bin:$PATH
 elif [ -x /usr/pgsql-9.5/bin/pg_ctl ]; then
-  export PATH=$PATH:/usr/pgsql-9.5/bin
+  export PATH=/usr/pgsql-9.5/bin:$PATH
 fi
 
 shift

@@ -25,12 +25,12 @@ PSQL="psql -p $PGPORT -h 127.0.0.1 -U postgres"
 PSQL_NOERR="$PSQL --set ON_ERROR_STOP=on"
 
 if [ -x /usr/pgsql-12/bin/pg_ctl ]; then
-  export PATH=$PATH:/usr/pgsql-12/bin
+  export PATH=/usr/pgsql-12/bin:$PATH
   pgpath=/usr/pgsql-12/share/contrib/postgis-3.1/
   postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
   postgisrestore=$pgpath/postgis_restore.pl
 elif [ -x /usr/pgsql-9.5/bin/pg_ctl ]; then
-  export PATH=$PATH:/usr/pgsql-9.5/bin
+  export PATH=/usr/pgsql-9.5/bin:$PATH
   pgpath=/usr/pgsql-9.5/share/contrib/postgis-3.0/
   postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
   postgisrestore=$pgpath/postgis_restore.pl
@@ -51,6 +51,8 @@ if ! psql --help >/dev/null 2>&1 ; then
     echo "No psql command found"
     exit 1
 fi
+
+psql --version
 
 # Check whether server is already running. Stop it if necessary
 if [ -f $PGDATA/postmaster.pid ] ; then
