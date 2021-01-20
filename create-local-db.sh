@@ -6,6 +6,7 @@ if [ -z $1 ] ; then
     export PGDATA=$(pwd)/tmp-db
 else
     export PGDATA=$1
+    if ! echo $PGDATA | grep -q ^/ ; then PGDATA=$(pwd)/$PGDATA; fi
 fi
 
 # Establish PGDG paths
