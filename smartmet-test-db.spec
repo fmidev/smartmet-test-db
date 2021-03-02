@@ -4,7 +4,7 @@
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
 Version: 21.3.2
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-test-db
@@ -51,6 +51,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Tue Apr  2 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.3.2-2.fmi
+- Use Unix socket for local test database
+
 * Tue Mar  2 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.2-1.fmi
 - Updated collations
 
