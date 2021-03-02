@@ -54,6 +54,9 @@ rm -rf $RPM_BUILD_ROOT
 * Tue Mar  2 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.2-1.fmi
 - Updated collations
 
+* Wed Jan 20 2021 Andris Pavenis <andris.pavenis@fmi.fi> - 21.1.20-1.fmi
+- Ensure use of absolute path for $PGDATA in scripts
+
 * Thu Dec 31 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.12.31-2.fmi
 - Ensure use of currect database version in create-local-db.sh and test-db-ctl.sh
 

@@ -6,6 +6,7 @@ if [ -z $1 ] ; then
     export PGDATA=$(pwd)/$(TOP)/tmp-db
 else
     export PGDATA=$1
+    if ! echo $PGDATA | grep -q ^/ ; then PGDATA=$(pwd)/$PGDATA; fi
 fi
 
 if [ -x /usr/pgsql-12/bin/pg_ctl ]; then
