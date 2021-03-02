@@ -3,8 +3,8 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 20.12.31
-Release: 2%{?dist}.fmi
+Version: 21.3.2
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-test-db
@@ -51,6 +51,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Tue Mar  2 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.2-1.fmi
+- Updated collations
+
 * Thu Dec 31 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.12.31-2.fmi
 - Ensure use of currect database version in create-local-db.sh and test-db-ctl.sh
 
