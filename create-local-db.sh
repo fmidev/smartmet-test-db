@@ -3,9 +3,10 @@
 set -x
 
 if [ -z $1 ] ; then
-    export PGDATA=$(pwd)/tmp-db
+    export PGDATA=$(realpath tmp-db)
 else
-    export PGDATA=$1
+    mkdir -p $1
+    export PGDATA=$(realpath $1)
     if ! echo $PGDATA | grep -q ^/ ; then PGDATA=$(pwd)/$PGDATA; fi
 fi
 
@@ -17,12 +18,12 @@ elif [ -x /usr/pgsql-9.5/bin/pg_ctl ]; then
   export PATH=$PATH:/usr/pgsql-9.5/bin
 fi
 
-export PGPORT=15444
+export PGPORT=5444
 prefix=$(dirname $0)
 
 INITDB="initdb --pgdata $PGDATA -U postgres"
-POSTGRES_PARAM="-k /tmp -p $PGPORT -F"
-PSQL="psql -p $PGPORT -h 127.0.0.1 -U postgres"
+POSTGRES_PARAM="-k $PGDATA -p $PGPORT -h \"\" -F"
+PSQL="psql -h $PGDATA -p $PGPORT -U postgres"
 PSQL_NOERR="$PSQL --set ON_ERROR_STOP=on"
 
 if [ -x /usr/pgsql-12/bin/pg_ctl ]; then
@@ -75,15 +76,15 @@ if ! $INITDB ; then
 fi
 
 stop_database() {
-    pg_ctl --pgdata=$PGDATA -o "-k /tmp -p $PGPORT" stop
+    pg_ctl --pgdata=$PGDATA -o "-l "" -k $PGDATA -h \"\"" stop
 }
 
 cleanup() {
     echo "Stopping Postgresql server..."
-    pg_ctl --pgdata=$PGDATA -o "-k /tmp -p $PGPORT" stop
+    pg_ctl --pgdata=$PGDATA -o "-k $PGDATA -h \"\"" stop
 }
 
-if pg_ctl --pgdata=$PGDATA -o "-k /tmp -p $PGPORT -F" start ; then
+if pg_ctl --pgdata=$PGDATA -o "-k $PGDATA -h \"\" -F" start ; then
     trap cleanup 0
     trap cleanup 2
     trap cleanup 15

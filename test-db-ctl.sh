@@ -3,9 +3,9 @@
 export PGPORT=5444
 
 if [ -z $1 ] ; then
-    export PGDATA=$(pwd)/$(TOP)/tmp-db
+    export PGDATA=$(realpath $(TOP)/tmp-db)
 else
-    export PGDATA=$1
+    export PGDATA=$(realpath $1)
     if ! echo $PGDATA | grep -q ^/ ; then PGDATA=$(pwd)/$PGDATA; fi
 fi
 
@@ -17,4 +17,4 @@ fi
 
 shift
 
-pg_ctl --pgdata=$PGDATA -o "-k /tmp -p $PGPORT" $*
+pg_ctl --pgdata=$PGDATA -o "-h \"\" -p $PGPORT -k $PGDATA" $*
