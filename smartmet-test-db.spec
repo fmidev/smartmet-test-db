@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 21.3.2
+Version: 21.3.3
 Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -51,6 +51,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Wed Apr  3 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.3.3-2.fmi
+- Update create-local-db.sh
+
 * Tue Apr  2 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.3.2-2.fmi
 - Use Unix socket for local test database
 
