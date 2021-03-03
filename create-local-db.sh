@@ -120,9 +120,9 @@ for dump in *.dump; do
   $PSQL -c "CREATE DATABASE $db;"
   echo Importing $dump
   for pgfile in $postgisfiles; do
-      $PSQL -f "$pgfile" $db 2>/dev/null || ok=false
+      $PSQL -f "$pgfile" $db || ok=false
   done
-  perl ./postgis_restore.pl "$dump" | $PSQL $db 2>/dev/null || ok=false
+  perl ./postgis_restore.pl "$dump" | $PSQL $db || ok=false
 done
 
 # Exit value:
