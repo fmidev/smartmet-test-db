@@ -76,15 +76,15 @@ if ! $INITDB ; then
 fi
 
 stop_database() {
-    pg_ctl --pgdata=$PGDATA -o "-l "" -k $PGDATA -h \"\"" stop
+    pg_ctl --pgdata=$PGDATA -o "-l "" -k $PGDATA -h \"\"" stop -w
 }
 
 cleanup() {
     echo "Stopping Postgresql server..."
-    pg_ctl --pgdata=$PGDATA -o "-k $PGDATA -h \"\"" stop
+    pg_ctl --pgdata=$PGDATA -o "-k $PGDATA -h \"\"" stop -w
 }
 
-if pg_ctl --pgdata=$PGDATA -o "-k $PGDATA -h \"\" -F" start ; then
+if pg_ctl --pgdata=$PGDATA -o "-k $PGDATA -h \"\" -F" start -w ; then
     trap cleanup 0
     trap cleanup 2
     trap cleanup 15
