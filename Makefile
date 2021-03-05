@@ -29,7 +29,8 @@ release: all
 
 clean:
 	rm -f *~
-	rm -rf tmp-db
+	if [ -f test-database ] ; then ./test_db_ctl test_database stop -w; fi
+	rm -rf test-database
 
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz dist/* # Clean a possible leftover from previous attempt
@@ -49,33 +50,15 @@ dumps:
 	  pg_dump -h smartmet-test -p 5444 -U postgres -Fc -b -v -f $$db.dump $$db > /dev/null 2>&1; \
 	done
 
-# Test:
-# - warn about data being destroyed
-# - init%start database if needed (if PG_HOST is localhost and postgresql is not running)
-# - check database connectivity
-# - clean databse of test data(without checking errors)
-# - insert test data(with error checking)
-# - check something(?)
-# - clean database of test data(with error checking)
-pginit =  $(shell ( ( test "`echo $$CIRCLE_JOB | cut -f 1 -d -`" = "test" && echo $(mydatadir)/test/db/init-and-start.sh ) || echo ./init-and-start.sh ))
-dbinst =  $(shell ( ( test "`echo $$CIRCLE_JOB | cut -f 1 -d -`" = "test" && echo $(mydatadir)/test/db/install-test-db.sh ) || echo ./install-test-db.sh ))
-
-test:
-	echo "CI=$$CI"
-	@test "$$CI" = "true" || ( \
-		echo "Running make test outside of CI will destroy local(or PGHOST) database contents!" ; \
-		echo "If you are sure, set environment CI=true" ; false )
-	test ! -d /usr/share/smartmet/test/db || make testinstall
-	PGPORT=12543 $(pginit)                                     # Test init
-	ps ax | grep -q 'postgres -D [/]*'                         # Check postgres is running
-	PGPORT=12543 $(dbinst)                                     # Test adding data
-	PGPORT=12543 $(pginit) stop                                # Test reinit and stop after that
-	if ( ps ax | grep -q 'postgres -D [/]*' ) ; then true ; fi # Check postgres is not running
-	@echo All tests passed.
+test:	clean
+	if ! ./create-local-db.sh test-database >test-database-create.log 2>&1 ; then cat test-database-create.log; false; fi
+	./test-local-db.sh test-database
 
 testinstall:
 	@echo "Testing installation file count"
 	ls -l /usr/share/smartmet/test/db/
 	test `ls /usr/share/smartmet/test/db/*.sql | wc -l` = "1"
 	test `ls /usr/share/smartmet/test/db/*.dump | wc -l` = "6"
-	test `ls /usr/share/smartmet/test/db/*.sh | wc -l` = "4"
+	test `ls /usr/share/smartmet/test/db/*.sh | wc -l` = "3"
+
+.PHONY: test
