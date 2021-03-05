@@ -24,7 +24,7 @@ PSQL="psql -e -h $PGDATA -p $PGPORT"
 ok=true
 
 ###############   Actual tests for accessing test databases   ##################
-$PSQL -c 'select count(*) from geonames' -U fminames_user fminames || ok = false
+$PSQL -c 'select count(*) from geonames' -U fminames_user fminames || ok=false
 ################################################################################
 
 pg_ctl --pgdata=$PGDATA -o "-h \"\" -p $PGPORT -k $PGDATA" stop -w
