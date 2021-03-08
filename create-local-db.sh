@@ -108,9 +108,6 @@ $PSQL -c "CREATE EXTENSION postgis;"
 $PSQL -c "CREATE EXTENSION postgis_raster;"
 $PSQL -c "CREATE EXTENSION postgis_topology;"
 
-# Import all locales
-$PSQL -c "select pg_import_system_collations('pg_catalog');"
-
 # Create databases. We need to be able to create manifest files from the dumps, hence we use /tmp
 mkdir -p /tmp/smartmet-test-db
 cd /tmp/smartmet-test-db
