@@ -3,8 +3,8 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 21.3.3
-Release: 2%{?dist}.fmi
+Version: 21.3.8
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-test-db
@@ -51,10 +51,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
-* Wed Apr  3 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.3.3-2.fmi
+* Mon Mar  8 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.8-1.fmi
+- Set LC_ALL=fi_FI.UTF-8 before calling initdb to get collations working
+
+* Wed Mar  3 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.3.3-2.fmi
 - Update create-local-db.sh
 
-* Tue Apr  2 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.3.2-2.fmi
+* Tue Mar  2 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.3.2-2.fmi
 - Use Unix socket for local test database
 
 * Tue Mar  2 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.2-1.fmi
