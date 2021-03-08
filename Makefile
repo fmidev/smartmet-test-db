@@ -49,10 +49,19 @@ dumps:
 	  echo Dumping $$db to $$db.dump; \
 	  pg_dump -h smartmet-test -p 5444 -U postgres -Fc -b -v -f $$db.dump $$db > /dev/null 2>&1; \
 	done
+	$(MAKE) postgis-dump-md5
+	mv -v postgis-dump-md5.txt postgis-dump-md5.expected.txt
 
 test:	clean
+	$(MAKE) check-postgis-dump-md5
 	if ! ./create-local-db.sh test-database >test-database-create.log 2>&1 ; then cat test-database-create.log; false; fi
 	./test-local-db.sh test-database
+
+postgis-dump-md5:
+	for dump in *.dump; do echo $$dump $$(perl ./postgis_restore.pl $$dump 2>/dev/null | md5sum); done | sort >postgis-dump-md5.txt
+
+check-postgis-dump-md5: postgis-dump-md5
+	diff postgis-dump-md5.expected.txt postgis-dump-md5.txt >/dev/null
 
 testinstall:
 	@echo "Testing installation file count"
