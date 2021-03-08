@@ -69,6 +69,9 @@ if [ -f $PGDATA/postmaster.pid ] ; then
     fi
 fi
 
+# Do NOT initialize with the C-locale or collations are not installed
+export LC_ALL="en_US.UTF-8"
+
 rm -rf tmp-db
 if ! $INITDB ; then
     echo "Failed to create PostgreSQL database cluster"
