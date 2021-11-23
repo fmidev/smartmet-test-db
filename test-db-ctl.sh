@@ -9,7 +9,9 @@ else
     if ! echo $PGDATA | grep -q ^/ ; then PGDATA=$(pwd)/$PGDATA; fi
 fi
 
-if [ -x /usr/pgsql-12/bin/pg_ctl ]; then
+if [ -x /usr/pgsql-13/bin/pg_ctl ]; then
+  export PATH=/usr/pgsql-13/bin:$PATH
+elif [ -x /usr/pgsql-12/bin/pg_ctl ]; then
   export PATH=/usr/pgsql-12/bin:$PATH
 elif [ -x /usr/pgsql-9.5/bin/pg_ctl ]; then
   export PATH=/usr/pgsql-9.5/bin:$PATH

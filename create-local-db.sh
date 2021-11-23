@@ -26,7 +26,12 @@ POSTGRES_PARAM="-k $PGDATA -p $PGPORT -h \"\" -F"
 PSQL="psql -h $PGDATA -p $PGPORT -U postgres"
 PSQL_NOERR="$PSQL --set ON_ERROR_STOP=on"
 
-if [ -x /usr/pgsql-12/bin/pg_ctl ]; then
+if [ -x /usr/pgsql-13/bin/pg_ctl ]; then
+  export PATH=/usr/pgsql-13/bin:$PATH
+  pgpath=/usr/pgsql-13/share/contrib/postgis-3.1/
+  postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
+  postgisrestore=$pgpath/postgis_restore.pl
+elif [ -x /usr/pgsql-12/bin/pg_ctl ]; then
   export PATH=/usr/pgsql-12/bin:$PATH
   pgpath=/usr/pgsql-12/share/contrib/postgis-3.1/
   postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
