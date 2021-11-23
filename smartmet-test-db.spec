@@ -13,18 +13,18 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 BuildRequires: bzip2
 BuildRequires: make
-BuildRequires: postgresql12-contrib
-BuildRequires: postgresql12-server
+BuildRequires: postgresql13-contrib
+BuildRequires: postgresql13-server
 BuildRequires: rpm-build
 Requires: bzip2
-Requires: postgis31_12
-Requires: postgresql12-contrib
-Requires: postgresql12-server
+Requires: postgis31_13
+Requires: postgresql13-contrib
+Requires: postgresql13-server
 #TestRequires: bzip2
 #TestRequires: make
-#TestRequires: postgis31_12
-#TestRequires: postgresql12-contrib
-#TestRequires: postgresql12-server
+#TestRequires: postgis31_13
+#TestRequires: postgresql13-contrib
+#TestRequires: postgresql13-server
 Provides: %{LIBNAME}
 
 %description
