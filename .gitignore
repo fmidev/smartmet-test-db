@@ -16,3 +16,4 @@ dist/
 /pgdata
 /test-database
 /test-database-create.log
+/smartmet-test-db.tar.gz
