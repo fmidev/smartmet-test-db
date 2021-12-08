@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 21.3.8
+Version: 21.12.8
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -51,6 +51,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Wed Dec  8 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.12.8-1.fmi
+- Upgrade to PostgreSQL 13
+
 * Mon Mar  8 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.8-1.fmi
 - Set LC_ALL=fi_FI.UTF-8 before calling initdb to get collations working
 
