@@ -12,12 +12,6 @@ fi
 
 # Establish PGDG paths
 
-if [ -x /usr/pgsql-12/bin/pg_ctl ]; then
-  export PATH=$PATH:/usr/pgsql-12/bin
-elif [ -x /usr/pgsql-9.5/bin/pg_ctl ]; then
-  export PATH=$PATH:/usr/pgsql-9.5/bin
-fi
-
 export PGPORT=5444
 prefix=$(dirname $0)
 
@@ -28,12 +22,11 @@ PSQL_NOERR="$PSQL --set ON_ERROR_STOP=on"
 
 if [ -x /usr/pgsql-13/bin/pg_ctl ]; then
   export PATH=/usr/pgsql-13/bin:$PATH
-  pgpath=/usr/pgsql-13/share/contrib/postgis-3.1/
-  postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
-  postgisrestore=$pgpath/postgis_restore.pl
-elif [ -x /usr/pgsql-12/bin/pg_ctl ]; then
-  export PATH=/usr/pgsql-12/bin:$PATH
-  pgpath=/usr/pgsql-12/share/contrib/postgis-3.1/
+  if [ -d /usr/pgsql-13/share/contrib/postgis-3.2/ ] ; then
+      pgpath=/usr/pgsql-13/share/contrib/postgis-3.2/
+  else
+      pgpath=/usr/pgsql-13/share/contrib/postgis-3.1/
+  fi
   postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
   postgisrestore=$pgpath/postgis_restore.pl
 elif [ -x /usr/pgsql-9.5/bin/pg_ctl ]; then
