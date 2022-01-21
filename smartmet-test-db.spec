@@ -17,12 +17,12 @@ BuildRequires: postgresql13-contrib
 BuildRequires: postgresql13-server
 BuildRequires: rpm-build
 Requires: bzip2
-Requires: postgis31_13
+Requires: postgis32_13
 Requires: postgresql13-contrib
 Requires: postgresql13-server
 #TestRequires: bzip2
 #TestRequires: make
-#TestRequires: postgis31_13
+#TestRequires: postgis32_13
 #TestRequires: postgresql13-contrib
 #TestRequires: postgresql13-server
 Provides: %{LIBNAME}
