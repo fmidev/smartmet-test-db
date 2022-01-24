@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 22.1.21
+Version: 22.1.24
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -52,6 +52,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Mon Jan 24 2022 Andris Pavēnis <andris.pavenis@fmi.fi> 22.1.24-1.fmi
+- Obsolete postgis31_13 to void update conflict
+
 * Fri Jan 21 2022 Andris Pavēnis <andris.pavenis@fmi.fi> 22.1.21-1.fmi
 - Repackage due to upgrade of packages from PGDG repo: gdal-3.4, geos-3.10, proj-8.2
 
