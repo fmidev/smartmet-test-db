@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 22.4.12
+Version: 22.4.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -52,6 +52,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %changelog
+* Thu Apr 14 2022 Pertti Kinnia <pertti.kinnia@fmi.fi> 22.4.14-1.fmi
+- avi.dump updated (dumped from docker database, fmidev/smartmet-server-test-db)
+
 * Tue Apr 12 2022 Pertti Kinnia <pertti.kinnia@fmi.fi> 22.4.12-1.fmi
 - Fixed create-local-db.sh sql file loading loop to process all given files instead of just the 1'st one. Load spatial_ref_sys.sql too
 - Added optional create-local-db.sh parameters; 'pg_restore' to use pg_restore (instead of postgis_restore.pl piped to psql which currently results spatial_ref_sys table to be empty, causing problem with geometry fields) to load dump file(s) and 'collation_C' to use C collation (instead of en_US.UTF-8 which e.g. causes avi test errors due to data ordering changes). Also added possibility to load given dump file(s) only (the rest of command line parameter(s) if any, e.g. only avi.dump is needed by avi tests). The new optional parameters can only be used when db directory (the first parameter which is optional too but can be empty) is given
