@@ -54,6 +54,10 @@ test:	clean
 	if ! ./create-local-db.sh test-database >test-database-create.log 2>&1 ; then cat test-database-create.log; false; fi
 	./test-local-db.sh test-database
 
+test-installed: clean
+	if ! $(mydatadir)/test/db/create-local-db.sh test-database >test-database-create.log 2>&1 ; then cat test-database-create.log; false; fi
+	./test-local-db.sh test-database
+
 testinstall:
 	@echo "Testing installation file count"
 	ls -l /usr/share/smartmet/test/db/
