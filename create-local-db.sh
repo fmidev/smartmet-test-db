@@ -48,6 +48,20 @@ set $pgdata
 export PGPORT=5444
 prefix=$(dirname $0)
 
+test_db_input=
+if [ "$prefix" == "." ] && [ -f globals.sql ] ; then
+    test_db_input="."
+    prefix=$(pwd)
+else
+    case $prefix in
+	/*)
+	    ;;
+	*)
+	    prefix=/usr/share/smartmet/test/db
+	    ;;
+    esac
+fi
+
 INITDB="initdb --pgdata $PGDATA -U postgres"
 POSTGRES_PARAM="-k $PGDATA -p $PGPORT -h \"\" -F"
 DBCONN="-h $PGDATA -p $PGPORT -U postgres"
@@ -140,7 +154,7 @@ if ! $PSQL -c 'SELECT 1;' >/dev/null 2>&1 ; then
 fi
 
 # Normal execution imports data into the database
-$PSQL -f /usr/share/smartmet/test/db/globals.sql
+$PSQL -f $prefix/globals.sql
 
 echo Creating postgis extensions
 $PSQL -c "CREATE EXTENSION postgis;"
@@ -150,7 +164,7 @@ $PSQL -c "CREATE EXTENSION postgis_topology;"
 # Create databases. We need to be able to create manifest files from the dumps, hence we use /tmp
 mkdir -p /tmp/smartmet-test-db
 cd /tmp/smartmet-test-db
-cp -v /usr/share/smartmet/test/db/* .
+cp -v $prefix/* .
 
 # Check if dump file name is included in the list of dump file names given (if any)
 excludeDump() {
