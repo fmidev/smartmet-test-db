@@ -17,7 +17,7 @@ BuildRequires: postgresql13-contrib
 BuildRequires: postgresql13-server
 BuildRequires: rpm-build
 Requires: bzip2
-Requires: postgis32_13
+Requires: postgis32_13 >= 3.2.4
 Obsoletes: postgis31_13
 Requires: postgresql13-contrib
 Requires: postgresql13-server

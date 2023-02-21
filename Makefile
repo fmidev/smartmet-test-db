@@ -40,7 +40,7 @@ rpm: clean $(SPEC).spec
 
 install:
 	mkdir -p $(mydatadir)/test/db
-	cp -v *.sh *dump *sql *.pl $(mydatadir)/test/db
+	cp -v *.sh *dump *sql $(mydatadir)/test/db
 
 dumps:
 	@echo Dumping globals to globals.sql

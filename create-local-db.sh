@@ -16,10 +16,6 @@ fi
 # If collation_C is given, use C collation instead of en_US.UTF-8.
 # Loading only given dump files (e.g. avi.dump] if any are given.
 #
-# For some reason postgis_restore.pl currently results into "spatial_ref_sys
-# does not exist" -errors etc but also to empty spatial_ref_sys table which
-# causes geometry definition (srid) errors.
-#
 # For example avi database does not need any special (postgis_restore.pl) handling,
 # and if collation is set to en_US.UTF-8, e.g. some avi tests fail due to data
 # ordering changes.
@@ -75,7 +71,7 @@ if [ -x /usr/pgsql-13/bin/pg_ctl ]; then
   else
       pgpath=/usr/pgsql-13/share/contrib/postgis-3.1/
   fi
-  postgisfiles=($pgpath/postgis.sql $pgpath/spatial_ref_sys.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
+  postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql $pgpath/spatial_ref_sys.sql )
   postgisrestore=$pgpath/postgis_restore.pl
 elif [ -x /usr/pgsql-9.5/bin/pg_ctl ]; then
   export PATH=/usr/pgsql-9.5/bin:$PATH
@@ -186,8 +182,10 @@ for dump in *.dump; do
   fi
 
   db=$(basename $dump .dump)
+
   echo Creating $db
   $PSQL -c "CREATE DATABASE $db;"
+
   echo Importing $dump
   for pgfile in ${postgisfiles[*]}; do
       $PSQL -f "$pgfile" $db || ok=false
@@ -196,7 +194,7 @@ for dump in *.dump; do
   if [ $use_pg_restore = true ]; then
       pg_restore -Fc $DBCONN -d $db "$dump" || ok=false
   else
-      perl ./postgis_restore.pl "$dump" | $PSQL $db || ok=false
+      perl $postgisrestore -s public "$dump" | $PSQL $db || ok=false
   fi
 done
 
