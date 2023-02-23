@@ -41,7 +41,7 @@ set $pgdata
 
 # Establish PGDG paths
 
-export PGPORT=5444
+export PGPORT=15444
 prefix=$(dirname $0)
 
 test_db_input=
