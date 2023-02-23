@@ -7,8 +7,11 @@ ifeq ($(origin PREFIX), undefined)
 else
   PREFIX = $(PREFIX)
 endif
+prefix = $(PREFIX)
 datadir = $(PREFIX)/share
 mydatadir = $(datadir)/smartmet
+localstatedir = $(datadir)/var
+mypgdir = $(localstatedir)/lib/pgsql/13/smartmet-test
 objdir = obj
 
 # How to install
@@ -21,7 +24,15 @@ DATABASES=authentication avi fminames gis icemap2storage_ro iot_obs
 #.PHONY: test rpm
 
 # The rules
-all: 
+all: test-db-ok
+
+test-db-ok: $(patsubst %, %.dump, $(DATABASES)) create-local-db.sh test-db-ctl.sh
+	rm -rf test-database
+	if ! ./create-local-db.sh test-database >test-database-create.log ; then \
+	    cat test-database-create.log; \
+	    false; \
+	fi
+	/usr/bin/date >$@
 
 debug: all
 
@@ -31,6 +42,7 @@ clean:
 	rm -f *~
 	if [ -f test-database ] ; then ./test_db_ctl test_database stop -w; fi
 	rm -rf test-database
+	rm -f test-db-ok
 
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz dist/* # Clean a possible leftover from previous attempt
@@ -39,8 +51,13 @@ rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz
 
 install:
-	mkdir -p $(mydatadir)/test/db
+	mkdir -p $(mydatadir)/test/db $(mypgdir) $(prefix)/lib/systemd/system/
 	cp -v *.sh *dump *sql $(mydatadir)/test/db
+	cp -r test-database/* $(mypgdir)/
+	/bin/echo /usr/pgsql-13/bin/postgres \"-D\" \"$(mypgdir\" >$(mypgdir)/postmaster.opts
+	/bin/sed -i -e '/^port\ /d' $(mypgdir)/postgresql.conf
+	/bin/echo "port = 5444" >>$(mypgdir)/postgresql.conf
+	/bin/cp -p smartmet-test-db.service $(prefix)/lib/systemd/system/
 
 dumps:
 	@echo Dumping globals to globals.sql

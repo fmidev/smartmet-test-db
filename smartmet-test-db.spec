@@ -51,6 +51,35 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0775,root,root,0775)
 %{_datadir}/smartmet/test/db/*
 
+%package devel
+Summary: FMI SmartSet test database (prebuilt) run as system service
+Requires: postgresql13-server
+Requires: postgis32_13 >= 3.2.4
+
+%description devel
+FMI postgresql database (prebuilt) run as system service
+
+%pre devel
+rm -rf %{_localstatedir}/lib/pgsql/13/smartmet-test
+
+%post devel
+if [ $1 -eq 1 ]; then
+   systemctl daemon-reload
+   systemctl enable --now smartmet-test-db
+fi
+
+%preun devel
+if [ $1 -eq 0 ]; then
+    systemctl disable --now smartmet-test-db
+fi
+
+%postun
+rm -rf %{_localstatedir}/lib/pgsql/13/smartmet-test
+
+%files devel
+%attr(0700,postgres,postgres) %{_localstatedir}/lib/pgsql/13/smartmet-test
+%attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
+
 %changelog
 * Thu Apr 14 2022 Pertti Kinnia <pertti.kinnia@fmi.fi> 22.4.14-1.fmi
 - avi.dump updated (dumped from docker database, fmidev/smartmet-server-test-db)
