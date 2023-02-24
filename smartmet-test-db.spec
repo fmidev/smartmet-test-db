@@ -64,14 +64,18 @@ FMI postgresql database (prebuilt) run as system service
 rm -rf %{_localstatedir}/lib/pgsql/13/smartmet-test
 
 %post devel
+systemctl daemon-reload
 if [ $1 -eq 1 ]; then
-   systemctl daemon-reload
    systemctl enable --now smartmet-test-db
+else
+   systemctl start smartmet-test-db
 fi
 
 %preun devel
 if [ $1 -eq 0 ]; then
     systemctl disable --now smartmet-test-db
+else
+    systemctl stop smartmet-test-db
 fi
 
 %postun
