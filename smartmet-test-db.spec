@@ -15,6 +15,7 @@ BuildRequires: bzip2
 BuildRequires: make
 BuildRequires: postgresql13-contrib
 BuildRequires: postgresql13-server
+BuildRequires: postgis32_13 >= 3.2.4
 BuildRequires: rpm-build
 Requires: bzip2
 Requires: postgis32_13 >= 3.2.4
@@ -81,9 +82,6 @@ rm -rf %{_localstatedir}/lib/pgsql/13/smartmet-test
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
-* Fri Feb 24 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.2.24-1.fmi
-- Fix creating SmartMet test database and add new package for prebuilt database
-
 * Thu Apr 14 2022 Pertti Kinnia <pertti.kinnia@fmi.fi> 22.4.14-1.fmi
 - avi.dump updated (dumped from docker database, fmidev/smartmet-server-test-db)
 
