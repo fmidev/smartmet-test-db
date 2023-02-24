@@ -4,7 +4,7 @@
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
 Version: 23.2.24
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-test-db
@@ -82,6 +82,9 @@ rm -rf %{_localstatedir}/lib/pgsql/13/smartmet-test
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
+* Fri Feb 24 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.2.24-2.fmi
+- Fix creating SmartMet test database and add new package for prebuilt database
+
 * Thu Apr 14 2022 Pertti Kinnia <pertti.kinnia@fmi.fi> 22.4.14-1.fmi
 - avi.dump updated (dumped from docker database, fmidev/smartmet-server-test-db)
 
