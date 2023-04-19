@@ -66,21 +66,33 @@ PSQL_NOERR="$PSQL --set ON_ERROR_STOP=on"
 
 if [ -x /usr/pgsql-13/bin/pg_ctl ]; then
   export PATH=/usr/pgsql-13/bin:$PATH
-  if [ -d /usr/pgsql-13/share/contrib/postgis-3.2/ ] ; then
-      pgpath=/usr/pgsql-13/share/contrib/postgis-3.2/
+  if [ -d /usr/pgsql-13/share/contrib/postgis-3.3/ ] ; then
+      pgpath=/usr/pgsql-13/share/contrib/postgis-3.3/
   else
-      pgpath=/usr/pgsql-13/share/contrib/postgis-3.1/
+      pgpath=/usr/pgsql-13/share/contrib/postgis-3.2/
   fi
   postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql $pgpath/spatial_ref_sys.sql )
   postgisrestore=$pgpath/postgis_restore.pl
-elif [ -x /usr/pgsql-9.5/bin/pg_ctl ]; then
-  export PATH=/usr/pgsql-9.5/bin:$PATH
-  pgpath=/usr/pgsql-9.5/share/contrib/postgis-3.0/
-  postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql)
-  postgisrestore=$pgpath/postgis_restore.pl
 else
-  postgisfiles=(/usr/share/pgsql/contrib/postgis-64.sql /usr/share/pgsql/contrib/postgis-2.0/topology.sql /usr/share/pgsql/contrib/postgis-2.0/rtpostgis.sql)
-  postgisrestore=/usr/share/postgis/postgis_restore.pl
+  # Add more search directories as needed
+    search_path="/usr/share/postgresql/contrib/postgis-3.3 /usr/share/postgresql/contrib/postgis-3.2"
+    postgis_files="postgis.sql topology.sql rtpostgis.sql spatial_ref_sys.sql"
+    found=false
+    for dir in $search_path; do
+        if ! $found ; then
+            ok=true
+            for file in $postgis_file postgis_restore.pl ; do
+                test -f $dir/$file || ok=false
+            done
+            if $ok ; then
+                found=true;
+                pgpath=$dir
+                postgisrestore=$pgpath/postgis_restore.pl
+                postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql $pgpath/spatial_ref_sys.sql )
+            fi
+        fi
+    done
+    $found || ( echo "PostGIS not found"; ecit 1; )
 fi
 
 postgisfiles_missing=
