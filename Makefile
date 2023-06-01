@@ -57,6 +57,9 @@ install:
 	/bin/echo /usr/pgsql-13/bin/postgres \"-D\" \"$(mypgdir\" >$(mypgdir)/postmaster.opts
 	/bin/sed -i -e '/^port\ /d' $(mypgdir)/postgresql.conf
 	/bin/echo "port = 5444" >>$(mypgdir)/postgresql.conf
+	/bin/echo "listen_addresses '*'" >>$(mypgdir)/postgresql.conf
+	/bin/echo "host    all             all              0.0.0.0/0                       md5" >>$(mypgdir)/pg_hba.conf
+	/bin/echo "host    all             all              ::/0                            md5" >>$(mypgdir)/pg_hba.conf
 	/bin/cp -p smartmet-test-db.service $(prefix)/lib/systemd/system/
 
 dumps:
