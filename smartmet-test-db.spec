@@ -3,8 +3,8 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 23.2.24
-Release: 2%{?dist}.fmi
+Version: 23.6.1
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-test-db
@@ -86,6 +86,9 @@ rm -rf %{_localstatedir}/lib/pgsql/13/smartmet-test
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
+* Thu Jun  1 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.6.1-1.fmi
+- Allow remote connections for installed binary database
+
 * Fri Feb 24 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.2.24-2.fmi
 - Fix creating SmartMet test database and add new package for prebuilt database
 
