@@ -13,20 +13,19 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 BuildRequires: bzip2
 BuildRequires: make
-BuildRequires: postgresql13-contrib
-BuildRequires: postgresql13-server
-BuildRequires: postgis32_13 >= 3.2.4
+BuildRequires: postgis33_15
+BuildRequires: postgresql15-contrib
+BuildRequires: postgresql15-server
 BuildRequires: rpm-build
 Requires: bzip2
-Requires: postgis32_13 >= 3.2.4
-Obsoletes: postgis31_13
-Requires: postgresql13-contrib
-Requires: postgresql13-server
+Requires: postgis33_15
+Requires: postgresql15-contrib
+Requires: postgresql15-server
 #TestRequires: bzip2
 #TestRequires: make
-#TestRequires: postgis32_13
-#TestRequires: postgresql13-contrib
-#TestRequires: postgresql13-server
+#TestRequires: postgis33_15
+#TestRequires: postgresql15-contrib
+#TestRequires: postgresql15-server
 Provides: %{LIBNAME}
 
 %description
@@ -54,14 +53,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %package devel
 Summary: FMI SmartSet test database (prebuilt) run as system service
-Requires: postgresql13-server
-Requires: postgis32_13 >= 3.2.4
+Requires: postgresql15-server
+Requires: postgis33_15
 
 %description devel
 FMI postgresql database (prebuilt) run as system service
 
 %pre devel
-rm -rf %{_localstatedir}/lib/pgsql/13/smartmet-test
+rm -rf %{_localstatedir}/lib/pgsql/15/smartmet-test
 
 %post devel
 systemctl daemon-reload
@@ -79,10 +78,10 @@ else
 fi
 
 %postun
-rm -rf %{_localstatedir}/lib/pgsql/13/smartmet-test
+rm -rf %{_localstatedir}/lib/pgsql/15/smartmet-test
 
 %files devel
-%attr(0700,postgres,postgres) %{_localstatedir}/lib/pgsql/13/smartmet-test
+%attr(0700,postgres,postgres) %{_localstatedir}/lib/pgsql/15/smartmet-test
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog

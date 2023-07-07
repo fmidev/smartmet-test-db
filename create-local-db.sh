@@ -64,12 +64,10 @@ DBCONN="-h $PGDATA -p $PGPORT -U postgres"
 PSQL="psql $DBCONN"
 PSQL_NOERR="$PSQL --set ON_ERROR_STOP=on"
 
-if [ -x /usr/pgsql-13/bin/pg_ctl ]; then
-  export PATH=/usr/pgsql-13/bin:$PATH
-  if [ -d /usr/pgsql-13/share/contrib/postgis-3.3/ ] ; then
-      pgpath=/usr/pgsql-13/share/contrib/postgis-3.3/
-  else
-      pgpath=/usr/pgsql-13/share/contrib/postgis-3.2/
+if [ -x /usr/pgsql-15/bin/pg_ctl ]; then
+  export PATH=/usr/pgsql-15/bin:$PATH
+  if [ -d /usr/pgsql-15/share/contrib/postgis-3.3/ ] ; then
+      pgpath=/usr/pgsql-15/share/contrib/postgis-3.3/
   fi
   postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql $pgpath/spatial_ref_sys.sql )
   postgisrestore=$pgpath/postgis_restore.pl

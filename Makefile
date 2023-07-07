@@ -11,7 +11,7 @@ prefix = $(PREFIX)
 datadir = $(PREFIX)/share
 mydatadir = $(datadir)/smartmet
 localstatedir = $(datadir)/var
-mypgdir = $(localstatedir)/lib/pgsql/13/smartmet-test
+mypgdir = $(localstatedir)/lib/pgsql/15/smartmet-test
 objdir = obj
 
 # How to install

@@ -12,7 +12,7 @@ Group=postgres
 Environment=PGPORT=5444
 
 # Location of database directory
-Environment=PGDATA=/var/lib/pgsql/13/smartmet-test
+Environment=PGDATA=/var/lib/pgsql/15/smartmet-test
 
 # Where to send early-startup messages from the server (before the logging
 # options of postgresql.conf take effect)
@@ -22,9 +22,9 @@ Environment=PGDATA=/var/lib/pgsql/13/smartmet-test
 # Disable OOM kill on the postmaster
 OOMScoreAdjust=-1000
 
-ExecStart=/usr/pgsql-13/bin/pg_ctl start -D ${PGDATA} -s -o "-p ${PGPORT} -k /tmp" -w -t 300
-ExecStop=/usr/pgsql-13/bin/pg_ctl stop -D ${PGDATA} -o "-p ${PGPORT} -k /tmp" -s -m fast
-ExecReload=/usr/pgsql-13/bin/pg_ctl reload -D ${PGDATA} -o "-p ${PGPORT} -k /tmp" -s
+ExecStart=/usr/pgsql-15/bin/pg_ctl start -D ${PGDATA} -s -o "-p ${PGPORT} -k /tmp" -w -t 300
+ExecStop=/usr/pgsql-15/bin/pg_ctl stop -D ${PGDATA} -o "-p ${PGPORT} -k /tmp" -s -m fast
+ExecReload=/usr/pgsql-15/bin/pg_ctl reload -D ${PGDATA} -o "-p ${PGPORT} -k /tmp" -s
 
 # Give a reasonable amount of time for the server to start up/shut down
 TimeoutSec=300
