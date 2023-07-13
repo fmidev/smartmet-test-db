@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 23.6.1
+Version: 23.7.13
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -85,6 +85,9 @@ rm -rf %{_localstatedir}/lib/pgsql/15/smartmet-test
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
+* Thu Jul 13 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.7.13-1.fmi
+- Update to postgresql-15 and postgis-3.3
+
 * Thu Jun  1 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.6.1-1.fmi
 - Allow remote connections for installed binary database
 
