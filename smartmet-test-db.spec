@@ -81,7 +81,7 @@ fi
 rm -rf %{_localstatedir}/lib/pgsql/15/smartmet-test
 
 %files devel
-%attr(0700,postgres,postgres) %{_localstatedir}/lib/pgsql/15/smartmet-test
+%attr(0700,postgres,postgres) %{_localstatedir}/lib/smartmet-test-db
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
