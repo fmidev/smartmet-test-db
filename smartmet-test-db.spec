@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 23.7.13
+Version: 23.7.21
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -85,6 +85,9 @@ rm -rf %{_localstatedir}/lib/pgsql/15/smartmet-test
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
+* Fri Jul 21 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.7.21-1.fmi
+- Move prebuilt test database files to /var/lib/smartmet-test-db
+
 * Thu Jul 13 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.7.13-1.fmi
 - Update to postgresql-15 and postgis-3.3
 
