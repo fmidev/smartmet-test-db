@@ -4,7 +4,7 @@
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
 Version: 24.5.14
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-test-db
@@ -89,6 +89,9 @@ fi
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
+* Tue May 14 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.5.14-2.fmi
+- Fix removing previous package files (including generated) on uninstall or upgrade
+
 * Tue May 14 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.5.14-1.fmi
 - Repackage
 
