@@ -59,26 +59,30 @@ Requires: postgis33_15
 %description devel
 FMI postgresql database (prebuilt) run as system service
 
-%pre devel
-rm -rf %{_localstatedir}/lib/pgsql/15/smartmet-test
-
 %post devel
 systemctl daemon-reload
 if [ $1 -eq 1 ]; then
+   echo Enabling and starting smartmet-test-db service
    systemctl enable --now smartmet-test-db
 else
+   echo Starting smartmet-test-db service
    systemctl start smartmet-test-db
 fi
 
 %preun devel
 if [ $1 -eq 0 ]; then
+    echo Stopping and disabling smartmet-test-db service
     systemctl disable --now smartmet-test-db
 else
+    echo Stopping smartmet-test-db service
     systemctl stop smartmet-test-db
 fi
 
-%postun
-rm -rf %{_localstatedir}/lib/pgsql/15/smartmet-test
+%postun devel
+if [ -d %{_localstatedir}/lib/smartmet-test-db ] ; then
+    echo "Removing possible remaining previous package files (including generated)"
+    rm -rfv %{_localstatedir}/lib/smartmet-test-db
+fi
 
 %files devel
 %attr(0700,postgres,postgres) %{_localstatedir}/lib/smartmet-test-db
