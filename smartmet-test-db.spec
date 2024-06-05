@@ -54,7 +54,7 @@ rm -rf $RPM_BUILD_ROOT
 %package devel
 Summary: FMI SmartSet test database (prebuilt) run as system service
 Requires: postgresql15-server
-Requires: postgis33_15
+Requires: postgis34_15
 
 %description devel
 FMI postgresql database (prebuilt) run as system service
