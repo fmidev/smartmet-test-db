@@ -3,8 +3,8 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 24.5.14
-Release: 2%{?dist}.fmi
+Version: 24.6.5
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-test-db
@@ -89,6 +89,9 @@ fi
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
+* Wed Jun  5 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.6.5-1.fmi
+- Update for PostGIS 3.4
+
 * Tue May 14 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.5.14-2.fmi
 - Fix removing previous package files (including generated) on uninstall or upgrade
 
