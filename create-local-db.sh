@@ -70,7 +70,7 @@ if [ -x /usr/pgsql-15/bin/pg_ctl ]; then
       pgpath=/usr/pgsql-15/share/contrib/postgis-3.4/
   fi
   postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql $pgpath/spatial_ref_sys.sql )
-  postgisrestore=/usr/share/postgis34_15/postgis_restore.pl
+  postgisrestore=/usr/pgsql-15/bin/postgis_restore
 else
   # Add more search directories as needed
     search_path="/usr/share/postgresql/contrib/postgis-3.4 /usr/share/postgresql/contrib/postgis-3.3"
@@ -85,7 +85,11 @@ else
             if $ok ; then
                 found=true;
                 pgpath=$dir
-                postgisrestore=$pgpath/postgis_restore.pl
+                if [ -f /usr/bin/postgis_restore ] ; then
+                    postgisrestore=/usr/bin/postgis_restore
+                else
+                    postgisrestore=$pgpath/postgis_restore.pl
+                fi
                 postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql $pgpath/spatial_ref_sys.sql )
             fi
         fi
