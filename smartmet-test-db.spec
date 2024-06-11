@@ -52,7 +52,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/test/db/*
 
 %package devel
-Summary: FMI SmartSet test database (prebuilt) run as system service
+Summary: FMI SmartMet test database (prebuilt) run as system service
 Requires: postgresql15-server
 Requires: postgis34_15
 
