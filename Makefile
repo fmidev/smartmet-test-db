@@ -11,7 +11,7 @@ prefix = $(PREFIX)
 datadir = $(PREFIX)/share
 mydatadir = $(datadir)/smartmet
 localstatedir = $(datadir)/var
-mypgdir = $(localstatedir)/lib/smartmet-test-db
+mypgdir = $(localstatedir)/lib/smartmet-test-db/pgdata
 objdir = obj
 
 # How to install
