@@ -78,7 +78,7 @@ else
     systemctl stop smartmet-test-db
 fi
 
-%postun devel
+%prein devel
 if [ -d %{_localstatedir}/lib/smartmet-test-db ] ; then
     echo "Removing possible remaining previous package files (including generated)"
     rm -rfv %{_localstatedir}/lib/smartmet-test-db
