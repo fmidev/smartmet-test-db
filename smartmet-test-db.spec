@@ -3,8 +3,8 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 24.5.14
-Release: 2%{?dist}.fmi
+Version: 24.6.14
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-test-db
@@ -88,6 +88,9 @@ fi
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
+* Fri Jun 14 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.6.14-1.fmi
+- Increase allowed connections count to 500 and try to fix RPM updated problems
+
 * Tue May 14 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.5.14-2.fmi
 - Fix removing previous package files (including generated) on uninstall or upgrade
 
