@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 24.6.5
+Version: 24.6.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -17,7 +17,9 @@ BuildRequires: postgis34_15
 BuildRequires: postgresql15-contrib
 BuildRequires: postgresql15-server
 BuildRequires: rpm-build
+BuildRequires: xz
 Requires: bzip2
+Requires: xz
 Requires: postgis34_15
 Requires: postgresql15-contrib
 Requires: postgresql15-server
@@ -43,6 +45,8 @@ make %{_smp_mflags}
 
 %install
 %makeinstall
+( cd $RPM_BUILD_ROOT%{_localstatedir}/lib/smartmet-test-db && tar c pgdata | xz -vv >pgdata.tar.xz )
+rm -rf $RPM_BUILD_ROOT%{_localstatedir}/lib/smartmet-test-db/pgdata
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -60,28 +64,23 @@ Requires: postgis34_15
 FMI postgresql database (prebuilt) run as system service
 
 %post devel
+rm -rf %{_localstatedir}/lib/smartmet-test-db/pgdata
+tar xJf %{_localstatedir}/lib/smartmet-test-db/pgdata.tar.xz -C %{_localstatedir}/lib/smartmet-test-db
+chown -R postgres:postgres %{_localstatedir}/lib/smartmet-test-db/pgdata
+chmod -R go-rwx %{_localstatedir}/lib/smartmet-test-db/pgdata
 systemctl daemon-reload
 if [ $1 -eq 1 ]; then
    echo Enabling and starting smartmet-test-db service
    systemctl enable --now smartmet-test-db
 else
    echo Starting smartmet-test-db service
-   systemctl start smartmet-test-db
+   systemctl restart smartmet-test-db
 fi
 
 %preun devel
 if [ $1 -eq 0 ]; then
     echo Stopping and disabling smartmet-test-db service
     systemctl disable --now smartmet-test-db
-else
-    echo Stopping smartmet-test-db service
-    systemctl stop smartmet-test-db
-fi
-
-%prein devel
-if [ -d %{_localstatedir}/lib/smartmet-test-db ] ; then
-    echo "Removing possible remaining previous package files (including generated)"
-    rm -rfv %{_localstatedir}/lib/smartmet-test-db
 fi
 
 %files devel
@@ -89,6 +88,9 @@ fi
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
+* Fri Jun 14 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.6.14-1.fmi
+- Increase allowed connections count to 500 and try to fix RPM update problems
+
 * Wed Jun  5 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.6.5-1.fmi
 - Update for PostGIS 3.4
 

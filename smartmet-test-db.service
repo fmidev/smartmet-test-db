@@ -12,7 +12,7 @@ Group=postgres
 Environment=PGPORT=5444
 
 # Location of database directory
-Environment=PGDATA=/var/lib/smartmet-test-db
+Environment=PGDATA=/var/lib/smartmet-test-db/pgdata
 
 # Where to send early-startup messages from the server (before the logging
 # options of postgresql.conf take effect)

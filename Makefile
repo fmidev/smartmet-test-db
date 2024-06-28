@@ -51,6 +51,7 @@ rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz
 
 install:
+	-./test_db_ctl stop
 	mkdir -p $(mydatadir)/test/db $(mypgdir) $(prefix)/lib/systemd/system/
 	cp -v *.sh *dump *sql $(mydatadir)/test/db
 	cp -r test-database/* $(mypgdir)/
