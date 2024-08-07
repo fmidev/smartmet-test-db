@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 24.6.14
+Version: 24.8.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -88,6 +88,9 @@ fi
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
+* Wed Aug  7 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.8.7-1.fmi
+- Update to gdal-3.8, geos-3.12, proj-94 and fmt-11
+
 * Fri Jun 14 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.6.14-1.fmi
 - Increase allowed connections count to 500 and try to fix RPM update problems
 
