@@ -63,6 +63,17 @@ Requires: postgis35_15
 %description devel
 FMI postgresql database (prebuilt) run as system service
 
+# Used script execution order:
+#   %pre - installation or upgrade, not uninstall
+#   %post - installation or upgrade, not uninstall
+#   %preun - uninstall or upgrade
+# See: https://docs.fedoraproject.org/en-US/packaging-guidelines/Scriptlets/
+#
+# Installing/upgrading:
+#   - remove previously unpacked database files if present
+#   - unpack prebuilt database files
+#   - set correct permissions for unpacked database files
+#   - enable and start (or restart) smartmet-test-db service
 %post devel
 rm -rf %{_localstatedir}/lib/smartmet-test-db/pgdata
 tar xJf %{_localstatedir}/lib/smartmet-test-db/pgdata.tar.xz -C %{_localstatedir}/lib/smartmet-test-db
@@ -77,11 +88,28 @@ else
    systemctl restart smartmet-test-db
 fi
 
+%pre devel
+# Upgrading: stop the previous version service at first before installing
+#            the new version (its %post section will unpack database
+#            files and overwrite the old ones)
+# Installing: no need to do anthing here, the service will be started
+#             in %post section
+if [ $1 -eq 2 ]; then
+    echo Stopping smartmet-test-db service before upgrade
+    systemctl stop smartmet-test-db
+fi
+
+# Uninstalling: stop and disable the service before and remove
+#               unpacked database files together with generated files
+# Upgrading: old version service is already stopped and disabled in %pre section
+#            so no need to do anything here, the new service should already
+#            be started in %post section
 %preun devel
 if [ $1 -eq 0 ]; then
     echo Stopping and disabling smartmet-test-db service
     systemctl disable --now smartmet-test-db
 fi
+rm -rf %{_localstatedir}/lib/smartmet-test-db/pgdata
 
 %files devel
 %attr(0700,postgres,postgres) %{_localstatedir}/lib/smartmet-test-db
