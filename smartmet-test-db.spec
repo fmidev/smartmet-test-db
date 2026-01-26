@@ -13,19 +13,19 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 BuildRequires: bzip2
 BuildRequires: make
-BuildRequires: postgis35_15
+BuildRequires: postgis36_15
 BuildRequires: postgresql15-contrib
 BuildRequires: postgresql15-server
 BuildRequires: rpm-build
 BuildRequires: xz
 Requires: bzip2
 Requires: xz
-Requires: postgis35_15
+Requires: postgis36_15
 Requires: postgresql15-contrib
 Requires: postgresql15-server
 #TestRequires: bzip2
 #TestRequires: make
-#TestRequires: postgis35_15
+#TestRequires: postgis36_15
 #TestRequires: postgresql15-contrib
 #TestRequires: postgresql15-server
 Provides: %{LIBNAME}
@@ -58,7 +58,7 @@ rm -rf $RPM_BUILD_ROOT
 %package devel
 Summary: FMI SmartMet test database (prebuilt) run as system service
 Requires: postgresql15-server
-Requires: postgis35_15
+Requires: postgis36_15
 
 %description devel
 FMI postgresql database (prebuilt) run as system service
