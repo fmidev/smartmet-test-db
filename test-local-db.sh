@@ -1,6 +1,6 @@
-#! /bin/sh
+#!/bin/bash
 
-export PGPORT=5444
+export PGPORT=5432
 
 if [ -z $1 ] ; then
     export PGDATA=$(realpath $(TOP)/tmp-db)
