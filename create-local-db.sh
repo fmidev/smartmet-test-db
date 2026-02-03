@@ -1,15 +1,15 @@
-#! /bin/sh
+#!/bin/bash
 #
 # create-local-db.sh [ tmp-db [ [ pg_restore | collation_C ] [ dumpfile dumpfile ... ] ]
 
 set -x
 
-if [ -z $1 ] ; then
+if [ -z "$1" ] ; then
     export PGDATA=$(realpath tmp-db)
 else
-    mkdir -p $1
-    export PGDATA=$(realpath $1)
-    if ! echo $PGDATA | grep -q ^/ ; then PGDATA=$(pwd)/$PGDATA; fi
+    mkdir -p "$1"
+    export PGDATA=$(realpath "$1")
+    if ! echo "$PGDATA" | grep -q ^/ ; then PGDATA=$(pwd)/$PGDATA; fi
 fi
 
 # If pg_restore is given, use pg_restore instead of postgis_restore.pl.
@@ -26,7 +26,7 @@ use_pg_restore=false
 use_collation_C=false
 
 for arg in 2 2; do
-    if [ "$2" = "pg_restore" -o "$2" = "collation_C" ]; then
+    if [ "$2" = "pg_restore" ] || [ "$2" = "collation_C" ]; then
         eval "use_$2=true"; shift
     fi
 done
@@ -42,19 +42,19 @@ set $pgdata
 # Establish PGDG paths
 
 export PGPORT=15444
-prefix=$(dirname $0)
+prefix=$(dirname "$0")
 
 test_db_input=
-if [ "$prefix" == "." ] && [ -f globals.sql ] ; then
+if [ "$prefix" = "." ] && [ -f globals.sql ] ; then
     test_db_input="."
     prefix=$(pwd)
 else
     case $prefix in
-	/*)
-	    ;;
-	*)
-	    prefix=/usr/share/smartmet/test/db
-	    ;;
+    /*)
+        ;;
+    *)
+        prefix=/usr/share/smartmet/test/db
+        ;;
     esac
 fi
 
@@ -79,8 +79,8 @@ else
     for dir in $search_path; do
         if ! $found ; then
             ok=true
-            for file in $postgis_file postgis_restore.pl ; do
-                test -f $dir/$file || ok=false
+            for file in $postgis_files postgis_restore.pl ; do
+                test -f "$dir/$file" || ok=false
             done
             if $ok ; then
                 found=true;
@@ -94,11 +94,11 @@ else
             fi
         fi
     done
-    $found || ( echo "PostGIS not found"; ecit 1; )
+    $found || ( echo "PostGIS not found"; exit 1; )
 fi
 
 postgisfiles_missing=
-for pgfile in ${postgisfiles[*]}; do test -f $pgfile || postgisfiles_missing="$postgisfiles_missing $pgfile"; done
+for pgfile in ${postgisfiles[*]}; do test -f "$pgfile" || postgisfiles_missing="$postgisfiles_missing $pgfile"; done
 if ! [ -z "$postgisfiles_missing" ] ; then
     echo "Files missing:\n   $postgisfiles_missing\n"
     echo "Is postgis installed"
@@ -113,20 +113,20 @@ fi
 psql --version
 
 # Check whether server is already running. Stop it if necessary
-if [ -f $PGDATA/postmaster.pid ] ; then
-    pid=$(head -1 $PGDATA/postmaster.pid)
+if [ -f "$PGDATA/postmaster.pid" ] ; then
+    pid=$(head -1 "$PGDATA/postmaster.pid")
     echo Seems that server is running. Try to stop it
     stop_database >/dev/null 2>&1
     if ! [ -z "$pid" ] ; then
         if readlink "/proc/$pid/exe" 2>/dev/null | grep -s postgres; then
-            kill $pid;
+            kill "$pid";
             sleep 3
         fi
     fi
 fi
 
 # Do NOT initialize with the C-locale or collations are not installed
-if [ "$use_collation_C" == false ]; then
+if [ "$use_collation_C" = false ]; then
     export LC_ALL="en_US.UTF-8"
 else
     export LC_ALL="C"
@@ -183,7 +183,7 @@ excludeDump() {
     if [ ${#dumps[@]} -eq 0 ]; then return 1; fi
 
     for d in "${dumps[@]}"; do
-        if [ $d = $dump ]; then return 1; fi
+        if [ "$d" = "$dump" ]; then return 1; fi
     done
 
     return 0
@@ -191,11 +191,11 @@ excludeDump() {
 
 ok=true
 for dump in *.dump; do
-  if excludeDump $dump ${dumps[@]}; then
+  if excludeDump "$dump" ${dumps[@]}; then
       continue
   fi
 
-  db=$(basename $dump .dump)
+  db=$(basename "$dump" .dump)
 
   echo Creating $db
   $PSQL -c "CREATE DATABASE $db;"
@@ -205,7 +205,7 @@ for dump in *.dump; do
       $PSQL -f "$pgfile" $db || ok=false
   done
 
-  if [ $use_pg_restore = true ]; then
+  if [ "$use_pg_restore" = true ]; then
       pg_restore -Fc $DBCONN -d $db "$dump" || ok=false
   else
       perl $postgisrestore -s public "$dump" | $PSQL $db || ok=false
