@@ -23,6 +23,8 @@ DATABASES=authentication avi fminames gis icemap2storage_ro iot_obs
 
 #.PHONY: test rpm
 
+vpath %.dump dumps
+
 # The rules
 all: test-db-ok
 
