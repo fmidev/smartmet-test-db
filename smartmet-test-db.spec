@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 25.6.18
+Version: 26.2.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -116,6 +116,9 @@ rm -rf %{_localstatedir}/lib/smartmet-test-db/pgdata
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
+* Thu Feb  5 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.2.5-1.fmi
+- Update to proj-9.7, gdal-3.12, fmt-12
+
 * Wed Jun 18 2025 Andris Pavēnis <andris.pavenis@fmi.fi> 25.6.18-1.fmi
 - Update smartmet-test-db.specre, smartmet-test-db.specost and smartmet-test-db.specreun scriptlets for devel package
 
