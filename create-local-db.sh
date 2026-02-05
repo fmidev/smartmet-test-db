@@ -66,14 +66,14 @@ PSQL_NOERR="$PSQL --set ON_ERROR_STOP=on"
 
 if [ -x /usr/pgsql-15/bin/pg_ctl ]; then
   export PATH=/usr/pgsql-15/bin:$PATH
-  if [ -d /usr/pgsql-15/share/contrib/postgis-3.5/ ] ; then
-      pgpath=/usr/pgsql-15/share/contrib/postgis-3.5/
+  if [ -d /usr/pgsql-15/share/contrib/postgis-3.6/ ] ; then
+      pgpath=/usr/pgsql-15/share/contrib/postgis-3.6/
   fi
   postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql $pgpath/spatial_ref_sys.sql )
   postgisrestore=/usr/pgsql-15/bin/postgis_restore
 else
   # Add more search directories as needed
-    search_path="/usr/share/postgresql/contrib/postgis-3.5 /usr/share/postgresql/contrib/postgis-3.4 /usr/share/postgresql/contrib/postgis-3.3"
+    search_path="/usr/share/postgresql/contrib/postgis-3.6 /usr/share/postgresql/contrib/postgis-3.5 /usr/share/postgresql/contrib/postgis-3.4 /usr/share/postgresql/contrib/postgis-3.3"
     postgis_files="postgis.sql topology.sql rtpostgis.sql spatial_ref_sys.sql"
     found=false
     for dir in $search_path; do
