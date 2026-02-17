@@ -69,35 +69,48 @@ FMI postgresql database (prebuilt) run as system service
 #   %preun - uninstall or upgrade
 # See: https://docs.fedoraproject.org/en-US/packaging-guidelines/Scriptlets/
 #
+%pre devel
+# Upgrading: stop the previous version service at first before installing
+#            the new version and remove unpacked database files
+# Installing: no need to do anthing here, the service will be started
+#             in %post section
+if [ $1 -eq 2 ]; then
+    echo Stopping smartmet-test-db service before upgrade
+    systemctl stop smartmet-test-db || :
+    echo Removing unpacked database files together with generated files
+    rm -rf %{_localstatedir}/lib/smartmet-test-db/pgdata
+fi
+#
 # Installing/upgrading:
 #   - remove previously unpacked database files if present
 #   - unpack prebuilt database files
 #   - set correct permissions for unpacked database files
 #   - enable and start (or restart) smartmet-test-db service
 %post devel
-rm -rf %{_localstatedir}/lib/smartmet-test-db/pgdata
-tar xJf %{_localstatedir}/lib/smartmet-test-db/pgdata.tar.xz -C %{_localstatedir}/lib/smartmet-test-db
-chown -R postgres:postgres %{_localstatedir}/lib/smartmet-test-db/pgdata
-chmod -R go-rwx %{_localstatedir}/lib/smartmet-test-db/pgdata
+echo Unpacking prebuilt database files
+if ! tar xJf %{_localstatedir}/lib/smartmet-test-db/pgdata.tar.xz -C %{_localstatedir}/lib/smartmet-test-db; then
+    echo "ERROR: Failed to unpack database files" >&2
+    exit 1
+fi
+echo Setting correct permissions for unpacked database files
+if ! chown -R postgres:postgres %{_localstatedir}/lib/smartmet-test-db/pgdata; then
+    echo "ERROR: Failed to set ownership on database files" >&2
+    exit 1
+fi
+if ! chmod go-rwx %{_localstatedir}/lib/smartmet-test-db/pgdata; then
+    echo "ERROR: Failed to set permissions on database files" >&2
+    exit 1
+fi
 systemctl daemon-reload
 if [ $1 -eq 1 ]; then
    echo Enabling and starting smartmet-test-db service
-   systemctl enable --now smartmet-test-db
+   systemctl enable --now smartmet-test-db || echo "WARNING: Failed to enable/start smartmet-test-db service" >&2
 else
    echo Starting smartmet-test-db service
-   systemctl restart smartmet-test-db
+   systemctl restart smartmet-test-db || echo "WARNING: Failed to restart smartmet-test-db service" >&2
 fi
-
-%pre devel
-# Upgrading: stop the previous version service at first before installing
-#            the new version (its %post section will unpack database
-#            files and overwrite the old ones)
-# Installing: no need to do anthing here, the service will be started
-#             in %post section
-if [ $1 -eq 2 ]; then
-    echo Stopping smartmet-test-db service before upgrade
-    systemctl stop smartmet-test-db
-fi
+sleep 5
+systemctl status smartmet-test-db --no-pager || :
 
 # Uninstalling: stop and disable the service before and remove
 #               unpacked database files together with generated files
@@ -107,12 +120,14 @@ fi
 %preun devel
 if [ $1 -eq 0 ]; then
     echo Stopping and disabling smartmet-test-db service
-    systemctl disable --now smartmet-test-db
+    systemctl disable --now smartmet-test-db || echo "WARNING: Failed to disable smartmet-test-db service" >&2
+    echo Removing unpacked database files together with generated files
+    rm -rf %{_localstatedir}/lib/smartmet-test-db/pgdata
 fi
-rm -rf %{_localstatedir}/lib/smartmet-test-db/pgdata
 
 %files devel
-%attr(0700,postgres,postgres) %{_localstatedir}/lib/smartmet-test-db
+%attr(0700,postgres,postgres) %dir %{_localstatedir}/lib/smartmet-test-db
+%attr(0644,postgres,postgres) %{_localstatedir}/lib/smartmet-test-db/pgdata.tar.xz
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
