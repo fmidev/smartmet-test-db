@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 26.2.5
+Version: 26.2.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -131,6 +131,9 @@ fi
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
+* Tue Feb 17 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.2.17-1.fmi
+- Fix service start/restart on install/upgrade (with Claude Sonnet 4.5 help)
+
 * Thu Feb  5 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.2.5-1.fmi
 - Update to proj-9.7, gdal-3.12, fmt-12
 
