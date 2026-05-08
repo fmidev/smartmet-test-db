@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-%{DIRNAME}
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 26.2.17
+Version: 26.5.8
 Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
@@ -131,6 +131,9 @@ fi
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.5.8-1.fmi
+- gis: add new schema gshhg with the GSHHG-h (high-resolution) coastline polygons (L1 land, L2 lakes, L3 islands-in-lakes, L4 ponds; Antarctic ice layers L5/L6 omitted). Provides ~200 m vertex spacing — roughly 10x denser than natural_earth.admin_0_countries — so map simplification / amalgamation tests in smartmet-plugin-wms can demonstrate visible thinning at typical screen resolutions. Adds ~21 MB to the gis dump.
+
 * Tue Feb 17 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.2.17-1.fmi
 - Fix service start/restart on install/upgrade (with Claude Sonnet 4.5 help)
 
