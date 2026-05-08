@@ -4,7 +4,7 @@
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
 Version: 26.5.8
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-test-db
@@ -131,6 +131,9 @@ fi
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
+* Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.5.8-2.fmi
+- Refresh all six dumps + globals.sql against the live smartmet-test database. Captures drift accumulated in the live DB since the previous 26.2.17 cut: authentication.dump 10 KB → 1.5 MB, avi.dump 5.3 MB → 6.8 MB, fminames.dump 9.9 MB → 10.8 MB, icemap2storage_ro.dump 1.8 MB → 3.3 MB, iot_obs.dump 7.1 MB → 8.6 MB. globals.sql gets new pg_dumpall \restrict/\unrestrict envelope (pg_dump 18+) and the avi_user TimeZone setting moves into the User Configurations block but remains effective.
+
 * Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.5.8-1.fmi
 - gis: add new schema gshhg with the GSHHG-h (high-resolution) coastline polygons (L1 land, L2 lakes, L3 islands-in-lakes, L4 ponds; Antarctic ice layers L5/L6 omitted). Provides ~200 m vertex spacing — roughly 10x denser than natural_earth.admin_0_countries — so map simplification / amalgamation tests in smartmet-plugin-wms can demonstrate visible thinning at typical screen resolutions. Adds ~21 MB to the gis dump.
 
