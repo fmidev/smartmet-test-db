@@ -79,22 +79,41 @@ else
     for dir in $search_path; do
         if ! $found ; then
             ok=true
-            for file in $postgis_file postgis_restore.pl ; do
+            for file in $postgis_file ; do
                 test -f $dir/$file || ok=false
             done
+
+            if $ok ; then
+                pgpath=$dir
+            else
+                continue
+            fi
+
+            for file in $dir/postgis_restore $dir/postgis_restore.pl /usr/bin/postgis_restore /usr/bin/postgis_restore.pl; do
+                ls -l $file
+                if test -f $file ; then
+                    postgisrestore=$file
+                    break
+                fi
+            done
+
             if $ok ; then
                 found=true;
-                pgpath=$dir
-                if [ -f /usr/bin/postgis_restore ] ; then
-                    postgisrestore=/usr/bin/postgis_restore
-                else
-                    postgisrestore=$pgpath/postgis_restore.pl
-                fi
                 postgisfiles=($pgpath/postgis.sql $pgpath/topology.sql $pgpath/rtpostgis.sql $pgpath/spatial_ref_sys.sql )
+                break;
             fi
         fi
     done
-    $found || ( echo "PostGIS not found"; exit 1; )
+
+    if ! $found ; then
+        echo "PostGIS not found in search path"
+        exit 1
+    fi
+fi
+
+if test -z "$postgisrestore" ; then
+    echo "ERROR: postgis_restore not found"
+    exit 1
 fi
 
 postgisfiles_missing=
