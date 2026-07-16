@@ -94,7 +94,7 @@ else
             fi
         fi
     done
-    $found || ( echo "PostGIS not found"; ecit 1; )
+    $found || ( echo "PostGIS not found"; exit 1; )
 fi
 
 postgisfiles_missing=
