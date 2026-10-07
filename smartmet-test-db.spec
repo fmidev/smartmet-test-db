@@ -7,8 +7,8 @@
 %define _binary_payload w0.ufdio
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
-Version: 26.5.8
-Release: 2%{?dist}.fmi
+Version: 26.10.7
+Release: 1%{?dist}.fmi
 License: MIT
 Group: Development/Libraries
 URL: https://github.com/fmidev/smartmet-test-db
@@ -135,6 +135,9 @@ fi
 %attr(0644,root,root) %{_prefix}/lib/systemd/system/%{SPECNAME}.service
 
 %changelog
+* Wed Oct 07 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.10.7-1.fmi
+- Compress the prebuilt database with all cores (xz -T0) and do not compress the RPM payload again, its large contents are compressed already
+
 * Fri May  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.5.8-2.fmi
 - Refresh all six dumps + globals.sql against the live smartmet-test database. Captures drift accumulated in the live DB since the previous 26.2.17 cut: authentication.dump 10 KB → 1.5 MB, avi.dump 5.3 MB → 6.8 MB, fminames.dump 9.9 MB → 10.8 MB, icemap2storage_ro.dump 1.8 MB → 3.3 MB, iot_obs.dump 7.1 MB → 8.6 MB. globals.sql gets new pg_dumpall \restrict/\unrestrict envelope (pg_dump 18+) and the avi_user TimeZone setting moves into the User Configurations block but remains effective.
 
