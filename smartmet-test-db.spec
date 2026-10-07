@@ -1,6 +1,10 @@
 %define DIRNAME test-db
 %define LIBNAME smartmet-%{DIRNAME}
 %define SPECNAME smartmet-%{DIRNAME}
+# The large contents are compressed already (the xz archive of the prebuilt
+# database and the pg_dump custom format dumps), compressing the payload once
+# more only costs time
+%define _binary_payload w0.ufdio
 Summary: Smartmet server test database contents
 Name: %{SPECNAME}
 Version: 26.5.8
@@ -45,7 +49,7 @@ make %{_smp_mflags}
 
 %install
 %makeinstall
-( cd $RPM_BUILD_ROOT%{_localstatedir}/lib/smartmet-test-db && tar c pgdata | xz -vv >pgdata.tar.xz )
+( cd $RPM_BUILD_ROOT%{_localstatedir}/lib/smartmet-test-db && tar c pgdata | xz -T0 -vv >pgdata.tar.xz )
 rm -rf $RPM_BUILD_ROOT%{_localstatedir}/lib/smartmet-test-db/pgdata
 
 %clean
