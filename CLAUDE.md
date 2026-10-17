@@ -20,7 +20,7 @@ make test               # Rebuild ./test-database/ and run test-local-db.sh agai
 make test-installed     # Same, but use the system-installed scripts in /usr/share/smartmet/test/db
 make rpm                # Build both base and -devel RPMs via rpmbuild -tb
 make clean              # Stop any running test cluster and remove ./test-database/
-make dumps              # Re-dump all six databases from a live server at smartmet-test:5444
+make dumps              # Re-dump all six databases from the reference test DB server (host in Makefile)
 ```
 
 Run a single database against the dumps without rebuilding all six (only `avi` here):
@@ -29,7 +29,7 @@ Run a single database against the dumps without rebuilding all six (only `avi` h
 ./create-local-db.sh test-database pg_restore avi.dump
 ```
 
-The third argument controls dump-loading: `pg_restore` (use `pg_restore` directly) or `collation_C` (init the cluster with `LC_ALL=C` instead of `en_US.UTF-8`). If neither keyword is given, dumps are piped through `postgis_restore.pl` to strip PostGIS objects before reload. Any further arguments are a whitelist of dump files; if empty, all six are loaded.
+The third argument controls dump-loading: `pg_restore` (use `pg_restore` directly) or `collation_C` (init the cluster with `LC_ALL=C` instead of `en_US.UTF-8`). If neither keyword is given, dumps are piped through `postgis_restore` (or `postgis_restore.pl`, whichever is found first under the PostgreSQL bin directories or `/usr/bin`) to strip PostGIS objects before reload. Any further arguments are a whitelist of dump files; if empty, all six are loaded.
 
 Control a built local cluster manually:
 
@@ -56,7 +56,7 @@ These differ on purpose: build-time work uses 15444 so it cannot interfere with 
 
 ## Updating dumps
 
-`make dumps` connects to `smartmet-test:5444` as `postgres` and overwrites the six `*.dump` files in-place plus regenerates `globals.sql` via `pg_dumpall -g`. After regenerating, bump the version in `smartmet-test-db.spec` and add a changelog entry — the `-devel` RPM ships a binary `pgdata`, so dump changes require a new release for downstream test images to pick them up.
+`make dumps` connects to the reference test database server (port 5444, host set in the `Makefile`) as `postgres` and overwrites the six `*.dump` files in-place plus regenerates `globals.sql` via `pg_dumpall -g`. After regenerating, bump the version in `smartmet-test-db.spec` and add a changelog entry — the `-devel` RPM ships a binary `pgdata`, so dump changes require a new release for downstream test images to pick them up.
 
 ## CI
 
