@@ -40,7 +40,7 @@ release: all
 
 clean:
 	rm -f *~
-	if [ -f test-database ] ; then ./test_db_ctl test_database stop -w; fi
+	if [ -d test-database ] ; then ./test-db-ctl.sh test-database stop -w; fi
 	rm -rf test-database
 	rm -f test-db-ok
 
@@ -51,7 +51,7 @@ rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz
 
 install:
-	-./test_db_ctl stop
+	-if [ -d test-database ] ; then ./test-db-ctl.sh test-database stop -w; fi
 	mkdir -p $(mydatadir)/test/db $(mypgdir) $(prefix)/lib/systemd/system/
 	cp -v *.sh *dump *sql $(mydatadir)/test/db
 	cp -r test-database/* $(mypgdir)/
